@@ -1,0 +1,3 @@
+name = "KoyuLP Skin",
+author = "Sommerlichter",
+comment = "CC 0 (1.0)",

@@ -1,0 +1,3 @@
+name = "DiamondDj",
+author = "david",
+comment = "CC BY-SA 3.0",

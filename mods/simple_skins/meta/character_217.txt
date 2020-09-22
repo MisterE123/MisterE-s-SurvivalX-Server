@@ -1,0 +1,3 @@
+name = "ColerArt26",
+author = "Colerart_26",
+comment = "CC BY-SA 4.0",

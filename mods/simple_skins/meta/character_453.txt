@@ -1,0 +1,3 @@
+name = "SK Rapid Wien Beric 2014/15",
+author = "david",
+comment = "CC BY-NC-SA 3.0",

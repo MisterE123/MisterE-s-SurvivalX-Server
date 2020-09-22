@@ -1,0 +1,3 @@
+name = "chicken terminator",
+author = "anonyme",
+comment = "CC BY-SA 3.0",

@@ -1,0 +1,3 @@
+name = "Electroid",
+author = "robotest",
+comment = "CC BY-SA 3.0",

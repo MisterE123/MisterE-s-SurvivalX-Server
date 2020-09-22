@@ -1,0 +1,5 @@
+#interval (min 1) that the concrete curing abm runs globally and turns liquid concrete into solid concrete
+concrete_abm_curing_interval (Concrete Curing Interval) int 60 1
+
+#choose wheather concrete should use buckets or sources. 0 means sources, 1 means buckets.
+concrete_use_buckets (Does Concrete Use Buckets) int 0 0 1

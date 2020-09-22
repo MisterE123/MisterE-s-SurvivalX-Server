@@ -1,0 +1,3 @@
+name = "MadMC",
+author = "MadMC",
+comment = "CC BY-SA 3.0",

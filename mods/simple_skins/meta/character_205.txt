@@ -1,0 +1,3 @@
+name = "Hunky Simon",
+author = "Andromeda",
+comment = "CC BY-NC-SA 3.0",

@@ -1,0 +1,3 @@
+name = "hombre de piedra rojo",
+author = "foxysong",
+comment = "CC BY-SA 3.0",

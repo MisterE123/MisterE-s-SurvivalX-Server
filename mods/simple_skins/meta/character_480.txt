@@ -1,0 +1,3 @@
+name = "Red &yuml;oshi",
+author = "&yuml;oshi_Retro",
+comment = "CC BY-NC-SA 4.0",

@@ -1,0 +1,3 @@
+name = "Funny_DJF01",
+author = "MinecraftersUnite",
+comment = "CC 0 (1.0)",

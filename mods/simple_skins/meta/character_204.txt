@@ -1,0 +1,3 @@
+name = "WindHero",
+author = "HeroOfTheWinds",
+comment = "CC BY-SA 3.0",

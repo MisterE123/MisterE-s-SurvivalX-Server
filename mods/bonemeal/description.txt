@@ -1,0 +1,7 @@
+Mod for Minetest. It provides one kind of simple bone meal (fertilizer) for fast growing plants, flowers, saplings, papyrus, grass...
+
+Based on default minetest_game API with as less additions as possible what makes this mod super light-weight and suitable for online multiplayer servers.
+
+Supports default minetest game blocks/plants/flowers... and any mod what uses minetest game API, e.g. farming_additions - though other mods can be easily implemented too.
+
+This mod aims to be simple, light-weight and fast, therefore it will have no bone meal 'strength', multiple types of bone meals nor diamond/mese bone meal.

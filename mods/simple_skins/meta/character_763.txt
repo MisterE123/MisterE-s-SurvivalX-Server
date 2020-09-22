@@ -1,0 +1,3 @@
+name = "Pigman (Male)",
+author = "TheLastPigman",
+comment = "CC BY-SA 3.0",

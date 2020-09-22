@@ -1,0 +1,5 @@
+default
+diamonds?
+moreores?
+areas?
+3d_armor?

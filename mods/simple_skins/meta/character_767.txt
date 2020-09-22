@@ -1,0 +1,3 @@
+name = "Wireframe Boy",
+author = "maruyuki",
+comment = "CC BY-SA 4.0",

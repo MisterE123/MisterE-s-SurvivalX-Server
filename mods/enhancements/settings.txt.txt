@@ -1,0 +1,9 @@
+TOOLS_ENHANCE = true
+CLEAN_UNKNOWN = false
+EXTERNAL_CMD = true
+PLAYER_AFK = false
+SPAWN_POINT = true
+ITEM_DROP = true
+TP_REQUEST = true
+PLAYER_ANIM = false
+AREAS_ENHANCE = false

@@ -1,0 +1,3 @@
+name = "Sam Pinky",
+author = "vvasde",
+comment = "CC BY-SA 3.0",

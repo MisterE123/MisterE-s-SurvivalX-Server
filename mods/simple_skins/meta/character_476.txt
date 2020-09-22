@@ -1,0 +1,3 @@
+name = "Gabixdev Skin 2",
+author = "gabixdev",
+comment = "CC 0 (1.0)",

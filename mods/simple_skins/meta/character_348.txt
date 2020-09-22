@@ -1,0 +1,3 @@
+name = "Cool Bacon",
+author = "Ghanastripes1",
+comment = "CC BY-SA 3.0",

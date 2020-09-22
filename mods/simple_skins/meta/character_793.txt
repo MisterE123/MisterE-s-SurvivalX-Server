@@ -1,0 +1,3 @@
+name = "Pikachu Boy",
+author = "ElMehdiBen",
+comment = "CC BY-SA 3.0",

@@ -1,0 +1,3 @@
+name = "Clo&eacute;",
+author = "Sporax",
+comment = "CC BY-SA 3.0",

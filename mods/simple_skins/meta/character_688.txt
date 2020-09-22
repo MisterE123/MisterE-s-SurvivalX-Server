@@ -1,0 +1,3 @@
+name = "stef325",
+author = "stef325",
+comment = "CC 0 (1.0)",

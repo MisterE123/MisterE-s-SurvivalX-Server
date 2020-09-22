@@ -1,0 +1,3 @@
+name = "Hugobobo",
+author = "Hugobobo",
+comment = "CC BY-SA 3.0",

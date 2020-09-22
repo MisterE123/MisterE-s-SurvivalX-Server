@@ -1,0 +1,3 @@
+name = "Lil Ghast",
+author = "Blitzfan",
+comment = "CC 0 (1.0)",

@@ -1,0 +1,3 @@
+name = "fire cool",
+author = "Dark-legion",
+comment = "CC BY-SA 3.0",

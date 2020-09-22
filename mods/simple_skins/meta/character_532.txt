@@ -1,0 +1,3 @@
+name = "spok",
+author = "dreispok",
+comment = "CC BY 4.0",

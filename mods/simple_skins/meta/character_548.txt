@@ -1,0 +1,3 @@
+name = "Rat",
+author = "WidDos / Calinou",
+comment = "CC BY-SA 4.0",

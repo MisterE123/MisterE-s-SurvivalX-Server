@@ -1,0 +1,8 @@
+
+If you are a developer or just a modder you can use this function:
+
+	soft_leaves.overrider(nodestring)
+
+"nodestring" is, e.g. "modname:leaves_node"
+
+It is used to turn the given leaves node to phantom, climbable.

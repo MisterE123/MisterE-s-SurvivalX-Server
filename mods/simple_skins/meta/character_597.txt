@@ -1,0 +1,3 @@
+name = "deezl",
+author = "deezl",
+comment = "CC BY-SA 3.0",

@@ -1,0 +1,3 @@
+name = "mostruo de pidedra gamer 2",
+author = "daniel pereira",
+comment = "CC BY-SA 3.0",

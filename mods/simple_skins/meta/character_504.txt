@@ -1,0 +1,3 @@
+name = "the_lolipopking hoodie",
+author = "david",
+comment = "CC BY-NC-SA 3.0",

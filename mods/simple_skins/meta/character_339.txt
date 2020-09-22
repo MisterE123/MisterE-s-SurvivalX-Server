@@ -1,0 +1,3 @@
+name = "ComputerizedCraft",
+author = "NoczuPL",
+comment = "CC BY-SA 3.0",

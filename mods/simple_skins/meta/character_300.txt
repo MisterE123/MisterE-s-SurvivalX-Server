@@ -1,0 +1,3 @@
+name = "Adventurer",
+author = "XSuperSaintX",
+comment = "CC BY 3.0",

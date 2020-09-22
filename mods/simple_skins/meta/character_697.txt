@@ -1,0 +1,3 @@
+name = "Ye Old Infinatum",
+author = "Semmett9",
+comment = "CC BY 4.0",

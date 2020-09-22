@@ -1,0 +1,3 @@
+name = "TheNinjaTNT",
+author = "NinjaCraftBR",
+comment = "CC BY-SA 3.0",

@@ -1,0 +1,3 @@
+name = "Shirt-less Shaun",
+author = "Josh Mars",
+comment = "CC BY 4.0",

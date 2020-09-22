@@ -1,0 +1,3 @@
+name = "Rydia",
+author = "Boco",
+comment = "CC BY-SA 3.0",

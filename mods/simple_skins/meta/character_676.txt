@@ -1,0 +1,3 @@
+name = "mostruo de pidedra",
+author = "daniel pereira",
+comment = "CC BY-SA 3.0",

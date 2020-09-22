@@ -1,0 +1,3 @@
+name = "Mamadou le bonobo",
+author = "Hisoka",
+comment = "CC BY-SA 3.0",

@@ -1,0 +1,3 @@
+name = "Priere52",
+author = "Priere52",
+comment = "CC BY-SA 3.0",

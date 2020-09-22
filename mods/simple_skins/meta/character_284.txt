@@ -1,0 +1,3 @@
+name = "devil",
+author = "sazonov.pavlik73-nickli",
+comment = "CC BY 3.0",
