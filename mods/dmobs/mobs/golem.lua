@@ -8,7 +8,7 @@ mobs:register_mob("dmobs:golem", {
 	attack_type = "dogfight",
 	hp_min = 62,
 	hp_max = 72,
-	armor = 100,
+	armor = 70,
 	collisionbox = {-0.4, 0, -0.4, 0.4, 2.5, 0.4},
 	visual = "mesh",
 	mesh = "golem.b3d",

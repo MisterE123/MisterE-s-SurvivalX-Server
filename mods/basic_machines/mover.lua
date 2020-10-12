@@ -3,73 +3,57 @@
 -- mod with basic simple automatization for minetest. No background processing, just one abm with 5s timer (clock generator), no other lag causing background processing.
 ------------------------------------------------------------------------------------------------------------------------------------
 
+
+
 --  *** SETTINGS *** --
 basic_machines.timer = 5 -- main timestep
 basic_machines.machines_minstep = 1 -- minimal allowed activation timestep, if faster machines overheat
+local machines_clockradius = math.floor(basic_machines.activeblocks / basic_machines.maxclock)
 
 basic_machines.max_range = 10 -- machines normal range of operation
 basic_machines.machines_operations = 10 -- 1 coal will provide 10 mover basic operations ( moving dirt 1 block distance)
 basic_machines.machines_TTL = 16 -- time to live for signals, how many hops before signal dissipates
 
-basic_machines.version = "12/04/2018a"
-basic_machines.clockgen = 1 -- if 0 all background continuously running activity (clockgen/keypad) repeating is disabled
+basic_machines.version = "12/09/2018a";
+basic_machines.clockgen = 1; -- if 0 all background continuously running activity (clockgen/keypad) repeating is disabled
 
 -- how hard it is to move blocks, default factor 1, note fuel cost is this multiplied by distance and divided by machine_operations..
 basic_machines.hardness = {
-	["default:stone"] = 4,
-	["default:tree"] = 2,
-	["default:jungletree"] = 2,
-	["default:pine_tree"] = 2,
-	["default:aspen_tree"] = 2,
-	["default:acacia_tree"] = 2,
-	["default:lava_source"] = 5950,
-	["default:water_source"] = 5950,
-	["default:river_water_source"] = 5950,
-	["default:obsidian"] = 20,
-	["bedrock2:bedrock"] = 999999,
-	["spawners_env:mobs_spider_spawner"] = 999999,
-	["spawners_env:mobs_spider_spawner_active"] = 999999,
-	["spawners_env:mobs_spider_spawner_waiting"] = 999999,
-	["spawners_env:spawners_mobs_uruk_hai_spawner"] = 999999,
-	["spawners_env:spawners_mobs_uruk_hai_spawner_active"] = 999999,
-	["spawners_env:spawners_mobs_uruk_hai_spawner_waiting"] = 999999,
-	["telemosaic:extender_one"] = 999999,
-	["telemosaic:extender_two"] = 999999,
-	["telemosaic:extender_three"] = 999999,
-	["telemosaic:beacon_off"] = 999999,
-	["telemosaic:beacon"] = 999999,
-	["telemosaic:beacon_err"] = 999999,
-	["farming_addons:cocoa_1"] = 999999,
-	["farming_addons:cocoa_2"] = 999999,
-	["farming_addons:cocoa_3"] = 999999,
-	["x_default:treasure_chest"] = 999999,
-	-- move machines for free
-	["basic_machines:mover"] = 0,
-	["basic_machines:keypad"] = 0,
-	["basic_machines:distributor"] = 0,
-	["basic_machines:battery"] = 0,
-	["basic_machines:detector"] = 0,
-	["basic_machines:generator"] = 0,
-	["basic_machines:clockgen"] = 0,
-	["basic_machines:ball_spawner"] = 0,
-	["basic_machines:light_on"] = 0,
-	["basic_machines:light_off"] = 0,
-	["farming:wheat_8"] = 1,
-	["farming:cotton_8"] = 1,
-	["farming:seed_wheat"] = 0.5,
-	["farming:seed_cotton"] = 0.5,
-}
+["default:stone"]=4,["default:tree"]=2,["default:jungletree"]=2,["default:pine_tree"]=2,["default:aspen_tree"]=2,["default:acacia_tree"]=2,
+["default:lava_source"]=5950,["default:water_source"]=5950,["default:obsidian"]=20,["bedrock2:bedrock"]=999999};
+--move machines for free
+basic_machines.hardness["basic_machines:mover"]=0.;
+basic_machines.hardness["basic_machines:keypad"]=0.;
+basic_machines.hardness["basic_machines:distributor"]=0.;
+basic_machines.hardness["basic_machines:battery"]=0.;
+basic_machines.hardness["basic_machines:detector"]=0.;
+basic_machines.hardness["basic_machines:generator"]=999999.;
+basic_machines.hardness["basic_machines:clockgen"]=999999.;
+basic_machines.hardness["basic_machines:ball_spawner"]=0.;
+basic_machines.hardness["basic_machines:light_on"]=0.;
+basic_machines.hardness["basic_machines:light_off"]=0.;
+
+-- grief potential items need highest possible upgrades
+basic_machines.hardness["boneworld:acid_source_active"]=5950.;
+basic_machines.hardness["darkage:mud"]=5950.;
+
+basic_machines.hardness["es:toxic_water_source"]=5950.;basic_machines.hardness["es:toxic_water_flowing"]=5950;
+basic_machines.hardness["default:river_water_source"]=5950.;
+
+-- farming operations are much cheaper
+basic_machines.hardness["farming:wheat_8"]=1;basic_machines.hardness["farming:cotton_8"]=1;
+basic_machines.hardness["farming:seed_wheat"]=0.5;basic_machines.hardness["farming:seed_cotton"]=0.5;
+
+-- digging mese crystals more expensive
+basic_machines.hardness["mese_crystals:mese_crystal_ore1"] = 10;
+basic_machines.hardness["mese_crystals:mese_crystal_ore2"] = 10;
+basic_machines.hardness["mese_crystals:mese_crystal_ore3"] = 10;
+basic_machines.hardness["mese_crystals:mese_crystal_ore4"] = 10;
+
 
 -- define which nodes are dug up completely, like a tree
-basic_machines.dig_up_table = {
-	["default:cactus"] = true,
-	["default:tree"] = true,
-	["default:jungletree"] = true,
-	["default:pine_tree"] = true,
-	["default:acacia_tree"] = true,
-	["default:aspen_tree"] = true,
-	["default:papyrus"] = true
-}
+basic_machines.dig_up_table = {["default:cactus"]=true,["default:tree"]=true,["default:jungletree"]=true,["default:pine_tree"]=true,
+["default:acacia_tree"]=true,["default:aspen_tree"]=true,["default:papyrus"]=true};
 
 -- set up nodes for harvest when digging: [nodename] = {what remains after harvest, harvest result}
 basic_machines.harvest_table = {
@@ -77,205 +61,150 @@ basic_machines.harvest_table = {
 ["mese_crystals:mese_crystal_ore3"] = {"mese_crystals:mese_crystal_ore1", "default:mese_crystal 2"},
 ["mese_crystals:mese_crystal_ore2"] = {"mese_crystals:mese_crystal_ore1", "default:mese_crystal 1"},
 ["mese_crystals:mese_crystal_ore1"] = {"mese_crystals:mese_crystal_ore1", ""},
-}
+};
+
+-- set up nodes for plant with reverse on and filter set (for example seeds -> plant) : [nodename] = plant_name
+basic_machines.plant_table = {["farming:seed_barley"]="farming:barley_1",["farming:beans"]="farming:beanpole_1", -- so it works with farming redo mod
+["farming:blueberries"]="farming:blueberry_1",["farming:carrot"]="farming:carrot_1",["farming:cocoa_beans"]="farming:cocoa_1",
+["farming:coffee_beans"]="farming:coffee_1",["farming:corn"]="farming:corn_1",["farming:blueberries"]="farming:blueberry_1",
+["farming:seed_cotton"]="farming:cotton_1",["farming:cucumber"]="farming:cucumber_1",["farming:grapes"]="farming:grapes_1",
+["farming:melon_slice"]="farming:melon_1",["farming:potato"]="farming:potato_1",["farming:pumpkin_slice"]="farming:pumpkin_1",
+["farming:raspberries"]="farming:raspberry_1",["farming:rhubarb"]="farming:rhubarb_1",["farming:tomato"]="farming:tomato_1",
+["farming:seed_wheat"]="farming:wheat_1",["farming:seed_hemp"]="farming:hemp_1",["farming:chili_pepper"]="farming:chili_1",
+["farming:garlic_clove"]="farming:garlic_1",["farming:onion"]="farming:onion_1",["farming:peppercorn"]="farming:pepper_1",
+["farming:pineapple_top"]="farming:pineapple_1",["farming:potato"]="farming:potato_1",["farming:pea_pod"]="farming:pea_1",
+["farming:beetroot"]="farming:beetroot_1",["farming:seed_oat"]="farming:oat_1",["farming:seed_rice"]="farming:rice_1",["farming:seed_rye"]="farming:rye_1"}
 
 -- list of objects that cant be teleported with mover
 basic_machines.no_teleport_table = {
-	["itemframes:item"] = true,
-	["signs:text"] = true,
-	["spawners_mobs:dummy_mobs_sheep_white"] = true,
-	["spawners_mobs:dummy_mobs_chicken"] = true,
-	["spawners_mobs:dummy_mobs_cow"] = true,
-	["spawners_mobs:dummy_mobs_oerkki"] = true,
-	["spawners_mobs:dummy_mobs_pumba"] = true,
-	["spawners_mobs:dummy_mobs_spider"] = true,
-	["spawners_mobs:dummy_mobs_stone_monster"] = true,
-	["spawners_mobs:dummy_mobs_tree_monster"] = true,
-	["spawners_mobs:dummy_spawners_mobs_balrog"] = true,
-	["spawners_mobs:dummy_spawners_mobs_bunny_evil"] = true,
-	["spawners_mobs:dummy_spawners_mobs_mummy"] = true,
-	["spawners_mobs:dummy_spawners_mobs_uruk_hai"] = true,
-	["spawners_ores:dummy_ore_stone_with_tin"] = true,
-	["spawners_ores:dummy_ore_stone_with_iron"] = true,
-	["spawners_ores:dummy_ore_stone_with_gold"] = true,
-	["spawners_ores:dummy_ore_stone_with_copper"] = true,
-	["spawners_env:dummy_spawners_mobs_uruk_hai"] = true,
-	["spawners_env:dummy_mobs_spider"] = true,
-	["spawners_env:dummy_spawners_mobs_balrog"] = true,
-	["xdecor:book_open"] = true
+["itemframes:item"] = true,
+["signs:text"] = true,
 }
 
 -- list of nodes mover cant take from in inventory mode
 basic_machines.limit_inventory_table = { -- node name = {list of bad inventories to take from}
-	["basic_machines:autocrafter"] = {["recipe"] = 1, ["output"] = 1},
-	["basic_machines:constructor"] = {["recipe"] = 1},
+	["basic_machines:autocrafter"]= {["recipe"]=1, ["output"]=1},
+	["basic_machines:constructor"]= {["recipe"]=1},
 	["basic_machines:battery_0"] = {["upgrade"] = 1},
 	["basic_machines:battery_1"] = {["upgrade"] = 1},
 	["basic_machines:battery_2"] = {["upgrade"] = 1},
 	["basic_machines:generator"] = {["upgrade"] = 1},
 	["basic_machines:mover"] = {["upgrade"] = 1},
-	["moreblocks:circular_saw"] = {["input"] = 1, ["recycle"] = 1, ["micro"] = 1, ["output"] = 1 },
-	["easyvend:depositor"] = {["item"] = 1, ["gold"] = 1},
-	["easyvend:vendor"] = {["item"] = 1, ["gold"] = 1},
-	["easyvend:depositor_on"] = {["item"] = 1, ["gold"] = 1},
-	["easyvend:vendor_on"] = {["item"] = 1, ["gold"] = 1},
-	["x_default:treasure_chest"] = {["main"] = 1},
+	["moreblocks:circular_saw"] = {["input"]=1,["recycle"]=1,["micro"]=1,["output"]=1},
 }
 
 -- when activated with keypad these will be "punched" to update their text too
 basic_machines.signs = {
-	["default:sign_wall_wood"] = true,
-	["signs:sign_wall_green"] = true,
-	["signs:sign_wall_green"] = true,
-	["signs:sign_wall_yellow"] = true,
-	["signs:sign_wall_red"] = true,
-	["signs:sign_wall_red"] = true,
-	["signs:sign_wall_white_black"] = true,
-	["signs:sign_yard"] = true
+["default:sign_wall_wood"] = true,
+["signs:sign_wall_green"] = true,
+["signs:sign_wall_green"] = true,
+["signs:sign_wall_yellow"] = true,
+["signs:sign_wall_red"] = true,
+["signs:sign_wall_red"] = true,
+["signs:sign_wall_white_black"] = true,
+["signs:sign_yard"] = true
 }
 
 --  *** END OF SETTINGS *** --
+
 
 local machines_timer = basic_machines.timer
 local machines_minstep = basic_machines.machines_minstep
 local max_range = basic_machines.max_range
 local machines_operations = basic_machines.machines_operations
 local machines_TTL = basic_machines.machines_TTL
-local punchset = {}
+
+
+local punchset = {};
 
 minetest.register_on_joinplayer(function(player)
-	local name = player:get_player_name()
-
-	if name == nil then
-		return
-	end
-
-	punchset[name] = {}
-	punchset[name].state = 0
+	local name = player:get_player_name(); if name == nil then return end
+	punchset[name] = {};
+	punchset[name].state = 0;
 end)
 
-local get_mover_form = function(pos,player)
-	if not player then
-		return
+local function check_abuse(prefer)
+      if prefer and prefer ~= "" then
+	    local stack = ItemStack(prefer)
+	    local item = stack:get_name()
+	    local count= stack:get_count()
+	    local maxs = stack:get_stack_max()
+	    if count > maxs then
+	      prefer = item.." "..tostring(maxs)
+	      --meta:set_string("prefer",prefer)
+	    end
 	end
+	return prefer
+end
 
+
+
+local get_mover_form = function(pos,player)
+
+	if not player then return end
 	local meta = minetest.get_meta(pos);
-	local x0, y0, z0, x1, y1, z1, x2, y2, z2, prefer, mode, mreverse
+	local x0,y0,z0,x1,y1,z1,x2,y2,z2,prefer,mode,mreverse;
 
-	-- pos1
-	x0 = meta:get_int("x0")
-	y0 = meta:get_int("y0")
-	z0 = meta:get_int("z0")
+	x0=meta:get_int("x0");y0=meta:get_int("y0");z0=meta:get_int("z0");x1=meta:get_int("x1");y1=meta:get_int("y1");z1=meta:get_int("z1");x2=meta:get_int("x2");y2=meta:get_int("y2");z2=meta:get_int("z2");
 
-	-- pos11
-	x1 = meta:get_int("x1")
-	y1 = meta:get_int("y1")
-	z1 = meta:get_int("z1")
+	machines.pos1[player:get_player_name()] = {x=pos.x+x0,y=pos.y+y0,z=pos.z+z0};machines.mark_pos1(player:get_player_name()) -- mark pos1
+	machines.pos11[player:get_player_name()] = {x=pos.x+x1,y=pos.y+y1,z=pos.z+z1};machines.mark_pos11(player:get_player_name()) -- mark pos11
+	machines.pos2[player:get_player_name()] = {x=pos.x+x2,y=pos.y+y2,z=pos.z+z2};machines.mark_pos2(player:get_player_name()) -- mark pos2
 
-	-- pos2
-	x2 = meta:get_int("x2")
-	y2 = meta:get_int("y2")
-	z2 = meta:get_int("z2")
+	prefer = meta:get_string("prefer");
 
-	machines.pos1[player:get_player_name()] = {x = pos.x + x0, y = pos.y + y0, z = pos.z + z0}
-	machines.mark_pos1(player:get_player_name()) -- mark pos1
-	machines.pos11[player:get_player_name()] = {x = pos.x + x1, y = pos.y + y1, z = pos.z + z1}
-	machines.mark_pos11(player:get_player_name()) -- mark pos11
-	machines.pos2[player:get_player_name()] = {x = pos.x + x2, y = pos.y + y2, z = pos.z + z2}
-	machines.mark_pos2(player:get_player_name()) -- mark pos2
+	prefer = check_abuse(prefer)
+	meta:set_string("prefer",prefer)
 
-	prefer = meta:get_string("prefer")
-	local mreverse = meta:get_int("reverse")
-	local list_name = "nodemeta:"..pos.x..","..pos.y..","..pos.z
-	local mode_list = {
-		["normal"] = 1,
-		["dig"] = 2,
-		["drop"] = 3,
-		["object"] = 4,
-		["inventory"] = 5,
-		["transport"] = 6
-	}
 
-	local mode_string = meta:get_string("mode") or ""
+	local mreverse = meta:get_int("reverse");
+	local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
+	local mode_list = {["normal"]=1,["dig"]=2, ["drop"]=3, ["object"]=4, ["inventory"]=5, ["transport"]=6};
 
-	-- source meta
-	local meta1 = minetest.get_meta({x = pos.x + x0, y = pos.y + y0, z = pos.z + z0})
-	-- target meta
-	local meta2 = minetest.get_meta({x = pos.x + x2, y = pos.y + y2, z = pos.z + z2})
+	local mode_string = meta:get_string("mode") or "";
 
-	local inv1 = 1
-	local inv2 = 1
-	local inv1m = meta:get_string("inv1")
-	local inv2m = meta:get_string("inv2")
+	local meta1 = minetest.get_meta({x=pos.x+x0,y=pos.y+y0,z=pos.z+z0}); -- source meta
+	local meta2 = minetest.get_meta({x=pos.x+x2,y=pos.y+y2,z=pos.z+z2}); -- target meta
 
-	local list1 = meta1:get_inventory():get_lists()
-	local inv_list1 = ""
-	-- stupid dropdown requires item index but returns string on receive so we have to find index.. grrr, one other solution: invert the table: key <-> value
-	local j = 1
+
+	local inv1=1; local inv2=1;
+	local inv1m = meta:get_string("inv1");local inv2m = meta:get_string("inv2");
+
+	local list1 = meta1:get_inventory():get_lists(); local inv_list1 = ""; local j;
+	j=1; -- stupid dropdown requires item index but returns string on receive so we have to find index.. grrr, one other solution: invert the table: key <-> value
+
 
 	for i in pairs( list1) do
-		inv_list1 = inv_list1 .. i .. ","
-		if i == inv1m then
-			inv1 = j
-		end
-		j = j + 1
+		inv_list1 = inv_list1 .. i .. ",";
+		if i == inv1m then inv1=j end; j=j+1;
+	end
+	local list2 = meta2:get_inventory():get_lists(); local inv_list2 = "";
+	j=1;
+	for i in pairs( list2) do
+		inv_list2 = inv_list2 .. i .. ",";
+		if i == inv2m then inv2=j; end; j=j+1;
 	end
 
-	local list2 = meta2:get_inventory():get_lists()
-	local inv_list2 = ""
-	j = 1
+	local upgrade = meta:get_float("upgrade"); if upgrade>0 then upgrade = upgrade - 1 end
+	local seltab = meta:get_int("seltab");
+	local form;
 
-	if list2 then
-		for i in pairs( list2) do
-			inv_list2 = inv_list2 .. i .. ","
-			if i == inv2m then
-				inv2 = j
-			end
-			j = j + 1
-		end
-	end
-
-	local upgrade = meta:get_float("upgrade")
-	if upgrade > 0 then
-		upgrade = upgrade - 1
-	end
-
-	if upgrade > 10 then
-		upgrade = 10
-		meta:set_float("upgrade", 10)
-	end
-
-	local seltab = meta:get_int("seltab")
-	local form
-
-	-- MODE --
-	if seltab == 1 then
+	if seltab == 1 then -- MODE --
 		local mode_description = {
 			["normal"] = "This will move blocks as they are - without change.",
 			["dig"] = "This will transform blocks as if player digged them.",
 			["drop"] = "This will take block/item out of chest (you need to set filter) and will drop it",
-			["object"] = "make TELEPORTER/ELEVATOR. This will move any object inside sphere (with center source1 and radius defined by source2) to target position. For ELEVATOR teleport points need to be placed exactly vertically in line with mover and you need to upgrade with 1 diamondblock for every 100 height difference. ",
+			["object"] = "make TELEPORTER/ELEVATOR. This will move any object inside sphere (with center source1 and radius defined by source2) to target position. For ELEVATOR teleport points need to be placed exactly in same coordinate line with mover and you need to upgrade with 1 diamondblock for every 100 height difference. ",
 			["inventory"] = "This will move items from inventory of any block at source position to any inventory of block at target position",
 			["transport"] = "This will move all blocks at source area to new area starting at target position. This mode preserves all inventories and other metadata",
-		}
+		};
 
-		local text = mode_description[mode_string] or "description"
-		local mode_list = {
-			["normal"] = 1,
-			["dig"] = 2,
-			["drop"] = 3,
-			["object"] = 4,
-			["inventory"] = 5,
-			["transport"] = 6
-		}
-
-		mode = mode_list[mode_string] or 1
+		local text = mode_description[mode_string] or "description";
+		local mode_list = {["normal"]=1,["dig"]=2, ["drop"]=3, ["object"]=4, ["inventory"]=5, ["transport"]=6};
+		mode = mode_list[mode_string] or 1;
 
 		form = "size[8,8.25]" ..  -- width, height
 		--"size[6,10]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
 		"tabheader[0,0;tabs;MODE OF OPERATION,WHERE TO MOVE;".. seltab .. ";true;true]"..
 		"label[0.,0;MODE selection]".."button[3,0.25;1,1;help;help]"..
 		"dropdown[0.,0.35;3,1;mode;normal,dig,drop,object,inventory,transport;".. mode .."]"..
@@ -291,23 +220,20 @@ local get_mover_form = function(pos,player)
 		"listring[nodemeta:"..pos.x..','..pos.y..','..pos.z ..";filter]"..
 		"listring[current_player;main] button_exit[5,0.25;1,1;OK;OK]"
 
+
 	else -- POSITIONS
 
-		local inventory_list1, inventory_list2
-
+		local inventory_list1,inventory_list2;
 		if mode_string == "inventory" then
 			inventory_list1 = "label[4.5,0.25;source inventory] dropdown[4.5,0.75;1.5,1;inv1;".. inv_list1 ..";" .. inv1 .."]"
 			inventory_list2 = "label[4.5,3.;target inventory] dropdown[4.5,3.5;1.5,1;inv2;".. inv_list2 .. ";" .. inv2 .."]"
 		else
-			inventory_list1 = ""
-			inventory_list2 = ""
+			inventory_list1 = ""; inventory_list2 = ""
 		end
+
 
 		form = "size[6,5.5]" ..  -- width, height
 		--"size[6,10]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
 		"tabheader[0,0;tabs;MODE OF OPERATION,WHERE TO MOVE;".. seltab .. ";true;true]"..
 
 		"label[0.,0;" .. minetest.colorize("lawngreen","INPUT AREA - mover will dig here").."]"..
@@ -330,1107 +256,622 @@ local get_mover_form = function(pos,player)
 	return form
 end
 
+
 local find_and_connect_battery = function(pos)
-	local r = 1
-	for i = 0, 2 do
+	local r = 1;
+	for i = 0,2 do
 		local positions = minetest.find_nodes_in_area( --find battery
-			{x = pos.x - r, y = pos.y - r, z = pos.z - r},
-			{x = pos.x + r, y = pos.y + r, z = pos.z + r},
+			{x=pos.x-r, y=pos.y-r, z=pos.z-r},
+			{x=pos.x+r, y=pos.y+r, z=pos.z+r},
 			"basic_machines:battery_" .. i )
-
-		if #positions > 0 then
-			local meta = minetest.get_meta(pos)
-			local fpos = positions[1]
-			meta:set_int("batx", fpos.x)
-			meta:set_int("baty", fpos.y)
-			meta:set_int("batz", fpos.z)
-
+		if #positions>0 then
+			local meta = minetest.get_meta(pos);
+			local fpos = positions[1] ;
+			meta:set_int("batx", fpos.x);meta:set_int("baty", fpos.y); meta:set_int("batz", fpos.z)
 			return fpos
 		end -- pick first battery we found
 	end
-
 	return nil
 end
+
 
 -- MOVER --
 minetest.register_node("basic_machines:mover", {
 	description = "Mover - universal digging/harvesting/teleporting/transporting machine, its upgradeable.",
-	tiles = {"basic_machine_mover_side.png"},
-	groups = {cracky = 3, mesecon_effector_on = 1},
+	tiles = {"compass_top.png","default_furnace_top.png", "basic_machine_mover_side.png","basic_machine_mover_side.png","basic_machine_mover_side.png","basic_machine_mover_side.png"},
+	groups = {cracky=3, mesecon_effector_on = 1},
 	sounds = default.node_sound_wood_defaults(),
-
 	after_place_node = function(pos, placer)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Mover block. Set it up by punching or right click. Activate it by keypad signal.")
-		meta:set_string("owner", placer:get_player_name())
-		meta:set_int("public", 0)
-		meta:set_int("x0", 0)
-		meta:set_int("y0", -1)
-		-- source1
-		meta:set_int("z0", 0)
-		meta:set_int("x1", 0)
-		meta:set_int("y1", -1)
-		-- source2: defines cube
-		meta:set_int("z1", 0)
-		meta:set_int("pc", 0)
-		-- current cube position and dimensions
-		meta:set_int("dim", 1)
-		meta:set_int("pc", 0)
-		-- current cube position and dimensions
-		meta:set_int("dim", 1)
-		meta:set_int("x2", 0)
-		meta:set_int("y2", 1)
-		meta:set_int("z2", 0)
-		meta:set_float("fuel", 0)
-		meta:set_string("prefer", "")
-		meta:set_string("mode", "normal")
-		meta:set_float("upgrade", 1)
-		meta:set_int("seltab", 1)
+		meta:set_string("owner", placer:get_player_name()); meta:set_int("public",0);
+		meta:set_int("x0",0);meta:set_int("y0",-1);meta:set_int("z0",0); -- source1
+		meta:set_int("x1",0);meta:set_int("y1",-1);meta:set_int("z1",0); -- source2: defines cube
+		meta:set_int("pc",0); meta:set_int("dim",1);-- current cube position and dimensions
+		meta:set_int("pc",0); meta:set_int("dim",1);-- current cube position and dimensions
+		meta:set_int("x2",0);meta:set_int("y2",1);meta:set_int("z2",0);
+		meta:set_float("fuel",0)
+		meta:set_string("prefer", "");
+		meta:set_string("mode", "normal");
+		meta:set_float("upgrade", 1);
+		meta:set_int("seltab",1);
 
-		local privs = minetest.get_player_privs(placer:get_player_name())
+		local privs = minetest.get_player_privs(placer:get_player_name());
+		if privs.privs then meta:set_float("upgrade", -1); end -- means operation will be for free
 
-		-- means operation will be for free
-		if privs.privs then
-			meta:set_float("upgrade", -1)
-		end
+		local inv = meta:get_inventory();inv:set_size("upgrade", 1*1);inv:set_size("filter", 1*1)
+		local name = placer:get_player_name(); punchset[name].state = 0
 
-		local inv = meta:get_inventory()
-		inv:set_size("upgrade", 1 * 1)
-		inv:set_size("filter", 1 * 1)
-
-		local name = placer:get_player_name()
-		punchset[name].state = 0
 
 		local text = "This machine can move anything. General idea is the following : \n\n"..
 		"First you need to define rectangle work area (where it takes, marked by two number 1 boxes that appear in world) and target area (where it puts, marked by one number 2 box) by punching mover then following CHAT instructions exactly.\n\n"..
 		"CHECK why it doesnt work: 1. did you click OK in mover after changing setting 2. does it have battery, 3. does battery have enough fuel\n\n"..
-		"IMPORTANT: Please read the help button inside machine before first use."
+		"IMPORTANT: Please read the help button inside machine before first use.";
 
 			local form = "size [5.5,5.5] textarea[0,0;6,7;help;MOVER INTRODUCTION;".. text.."]"
-			-- minetest.show_formspec(name, "basic_machines:intro_mover", form)
+			minetest.show_formspec(name, "basic_machines:intro_mover", form)
+
+
+
 	end,
 
-	-- dont dig if upgrades inside, cause they will be destroyed
-	can_dig = function(pos, player)
-		local meta = minetest.get_meta(pos)
-		local inv = meta:get_inventory()
-		return inv:is_empty("upgrade")
+	can_dig = function(pos, player) -- dont dig if upgrades inside, cause they will be destroyed
+		local meta = minetest.get_meta(pos);
+		local inv = meta:get_inventory();
+		return inv:is_empty("upgrade") and inv:is_empty("filter")
 	end,
+
 
 	on_rightclick = function(pos, node, player, itemstack, pointed_thing)
-		local privs = minetest.get_player_privs(player:get_player_name())
-		local cant_build = minetest.is_protected(pos,player:get_player_name())
+		local privs = minetest.get_player_privs(player:get_player_name());
+		local cant_build = minetest.is_protected(pos,player:get_player_name());
+		if not privs.privs and cant_build then return end -- only ppl sharing protection can setup
 
-		-- only ppl sharing protection can setup
-		if not privs.privs and cant_build then
-			return
-		end
-
-		local form = get_mover_form(pos, player)
+		local form = get_mover_form(pos,player)
 		minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return 0
-		end
-
-		local stack_name = stack:get_name()
-
 		if listname == "filter" then
-			local meta = minetest.get_meta(pos)
-			local form = get_mover_form(pos, player)
-
-			meta:set_string("prefer", stack_name)
+			local meta = minetest.get_meta(pos);
+			local itemname = stack:get_name() or "";
+			meta:set_string("prefer",itemname);
+			--minetest.chat_send_player(player:get_player_name(),"#mover: filter set as " .. itemname)
+			local form = get_mover_form(pos,player)
 			minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
-
-			return 1
+			return 1;
 		end
-
-		if listname == "upgrade" then
-			if not (stack_name == "default:diamondblock" or stack_name == "default:mese") then
-				return 0
-			end
-		end
-
-		return stack:get_count()
-	end,
-
-	on_metadata_inventory_put = function(pos, listname, index, stack, player)
 
 		if listname == "upgrade" then
 			-- update upgrades
-			local meta = minetest.get_meta(pos)
-			local upgrade = 0
-			local inv = meta:get_inventory()
-			local stack_name = stack:get_name()
-			local upgrade_name = "default:mese"
+			local meta = minetest.get_meta(pos);
+			local upgrade = 0;
+			local inv = meta:get_inventory();
 
-			-- check if upgrade should be for elevator
-			if meta:get_int("elevator") == 1 then
-				upgrade_name = "default:diamondblock"
-			end
+			local upgrade_name = "default:mese";
+			if meta:get_int("elevator")==1 then upgrade_name = "default:diamondblock" end
+			if stack:get_name() == upgrade_name then
+			--inv:contains_item("upgrade", ItemStack({name="default:mese"})) then
+				upgrade = (inv:get_stack("upgrade", 1):get_count()) or 0;
+				upgrade = upgrade + stack:get_count();
+				if upgrade > 10 then upgrade = 10 end -- not more than 10
+				meta:set_float("upgrade",upgrade+1);
 
-			-- add upgrades
-			if stack_name == upgrade_name then
-				upgrade = inv:get_stack(listname, index):get_count() or 0
-
-				-- not more than 10
-				if upgrade > 10 then
-					upgrade = 10
-				end
-
-				meta:set_float("upgrade", upgrade + 1)
-
-				local form = get_mover_form(pos, player)
-				minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
-			-- reset upgrade level when switching the item
-			else
-				meta:set_float("upgrade", 1)
-
-				local form = get_mover_form(pos, player)
+				local form = get_mover_form(pos,player)
 				minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
 			end
+
 
 		end
+
+		return stack:get_count();
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-		local meta = minetest.get_meta(pos)
-		-- reset upgrade
-		meta:set_float("upgrade", 1)
-		local form = get_mover_form(pos, player)
+		local meta = minetest.get_meta(pos);
+		meta:set_float("upgrade",1); -- reset upgrade
+		local form = get_mover_form(pos,player)
 		minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
-		return stack:get_count()
+		return stack:get_count();
 	end,
 
-	mesecons = {
-		effector = {
-			action_on = function(pos, node,ttl)
-				if type(ttl) ~= "number" then
-					ttl = 1
-				end
+	mesecons = {effector = {
+		action_on = function (pos, node,ttl)
+			local copystack = nil
 
-				local meta = minetest.get_meta(pos)
-				local fuel = meta:get_float("fuel")
+			if type(ttl)~="number" then ttl = 1 end
+			local meta = minetest.get_meta(pos);
+			local fuel = meta:get_float("fuel");
 
-				local x0 = meta:get_int("x0")
-				local y0 = meta:get_int("y0")
-				local z0 = meta:get_int("z0")
-				local x2 = meta:get_int("x2")
-				local y2 = meta:get_int("y2")
-				local z2 = meta:get_int("z2")
 
-				local mode = meta:get_string("mode")
-				local mreverse = meta:get_int("reverse")
-				-- where to take from
-				local pos1 = {x = x0 + pos.x, y = y0 + pos.y, z = z0 + pos.z}
-				-- where to put
-				local pos2 = {x = x2 + pos.x, y = y2 + pos.y, z = z2 + pos.z}
-				local pc = meta:get_int("pc")
-				local dim = meta:get_int("dim")
-				pc = (pc+1) % dim
-				-- cycle position
-				meta:set_int("pc", pc)
-				-- get dimensions
-				local x1 = meta:get_int("x1") - x0 + 1
-				local y1 = meta:get_int("y1") - y0 + 1
-				local z1 = meta:get_int("z1") - z0 + 1
+			local x0=meta:get_int("x0"); local y0=meta:get_int("y0"); local z0=meta:get_int("z0");
+			local x2=meta:get_int("x2"); local y2=meta:get_int("y2"); local z2=meta:get_int("z2");
 
-				--pc = z*a*b+x*b+y, from x,y,z to pc
-				-- set current input position
-				pos1.y = y0 + (pc % y1)
-				pc = (pc - (pc % y1)) / y1
-				pos1.x = x0 + (pc % x1)
-				pc = (pc - (pc % x1)) / x1
-				pos1.z = z0 + pc
-				pos1.x = pos.x + pos1.x
-				pos1.y = pos.y + pos1.y
-				pos1.z = pos.z + pos1.z
+			local mode = meta:get_string("mode");
+			local mreverse = meta:get_int("reverse")
+			local pos1 = {x=x0+pos.x,y=y0+pos.y,z=z0+pos.z}; -- where to take from
+			local pos2 = {x=x2+pos.x,y=y2+pos.y,z=z2+pos.z}; -- where to put
 
-				-- special modes that use its own source/target positions:
-				if mode == "transport" and mreverse < 2 then
-					-- translation from pos1
-					pos2 = {
-						x = meta:get_int("x2") - x0 + pos1.x,
-						y = meta:get_int("y2") - y0 + pos1.y,
-						z = meta:get_int("z2") - z0 + pos1.z
-					}
-				end
+			local pc = meta:get_int("pc"); local dim = meta:get_int("dim");	pc = (pc+1) % dim;meta:set_int("pc",pc) -- cycle position
+			local x1=meta:get_int("x1")-x0+1;local y1=meta:get_int("y1")-y0+1;local z1=meta:get_int("z1")-z0+1; -- get dimensions
 
-				-- reverse pos1, pos2
-				if mreverse ~= 0 and mreverse ~= 2 then
-					if mode == "object" then
-						x0 = pos2.x - pos.x
-						y0 = pos2.y - pos.y
-						z0 = pos2.z - pos.z
-						pos2 = {x = pos1.x, y = pos1.y, z = pos1.z}
-					else
-						local post = {x = pos1.x, y = pos1.y, z = pos1.z}
-						pos1 = {x = pos2.x, y = pos2.y, z = pos2.z}
-						pos2 = {x = post.x, y = post.y, z = post.z}
-					end
-				end
+			--pc = z*a*b+x*b+y, from x,y,z to pc
+			-- set current input positionstack = inv:get_stack("upgrade", i);item = stack:get_name();count= stack:get_count();
+			pos1.y = y0 + (pc % y1); pc = (pc - (pc % y1))/y1;
+			pos1.x = x0 + (pc % x1); pc = (pc - (pc % x1))/x1;
+			pos1.z = z0 + pc;
+			pos1.x = pos.x+pos1.x;pos1.y = pos.y+pos1.y;pos1.z = pos.z+pos1.z;
 
-				-- PROTECTION CHECK
-				local owner = meta:get_string("owner")
+			-- special modes that use its own source/target positions:
+			if mode == "transport" and mreverse<2 then
+				pos2 = {x=meta:get_int("x2")-x0+pos1.x,y=meta:get_int("y2")-y0+pos1.y,z=meta:get_int("z2")-z0+pos1.z}; -- translation from pos1
+			end
 
-				if (minetest.is_protected(pos1, owner) or minetest.is_protected(pos2, owner)) and mode ~= "object" then
-					meta:set_string("infotext", "Mover block. Protection fail.")
-					return
-				end
-
-				local node1 = minetest.get_node(pos1)
-				local node2 = minetest.get_node(pos2)
-				local prefer = meta:get_string("prefer")
-
-				-- prevent mover from working when player offline and reverse seed planting is enabled
-				if mode == "normal" or mode == "dig" then
-					local placer = minetest.get_player_by_name(owner)
-					local tempprefer = prefer
-					if tempprefer == "" then
-						tempprefer = ":"
-					end
-
-					local name_parts = tempprefer:split(":")
-
-					if not placer and
-						 not (node2.name == "default:chest" or node2.name == "default:chest_locked") and
-						 (name_parts[1] == "farming" or name_parts[1] == "farming_addons") then
-						return
-					end
-				end
-
-				-- FUEL COST: calculate
-				local dist = math.abs(pos2.x - pos1.x) + math.abs(pos2.y - pos1.y) + math.abs(pos2.z - pos1.z)
-				local hardness = basic_machines.hardness[node1.name]
-
-				-- no free teleports from machine blocks
-				if hardness == 0 and mode == "object" then
-					hardness = 1
-				end
-
-				local fuel_cost = hardness or 1
-				local upgrade =  meta:get_float("upgrade") or 1
-
-				-- taking items from chests/inventory move
-				if node1.name == "default:chest_locked" or mode == "inventory" then
-					fuel_cost = basic_machines.hardness[prefer] or 1
-				end
-
-				fuel_cost = fuel_cost * dist / machines_operations -- machines_operations=10 by default, so 10 basic operations possible with 1 coal
-
+			if mreverse ~= 0 and mreverse ~= 2 then -- reverse pos1, pos2
 				if mode == "object" then
-					fuel_cost = fuel_cost * 0.1
-
-					-- check if elevator mode
-					if x2 == 0 and z2 == 0 then
-						local requirement = math.floor(math.abs(pos2.y - pos.y) / 100) + 1
-
-						if upgrade - 1 < requirement then
-							meta:set_string("infotext","MOVER: Elevator error. Need at least "..requirement .. " diamond block(s) in upgrade (1 for every 100 height). ")
-							return
-						end
-
-						fuel_cost = 0
-					end
-
-				elseif mode == "inventory" then
-					fuel_cost = fuel_cost * 0.1
+					x0 = pos2.x-pos.x; y0 = pos2.y-pos.y; z0 = pos2.z-pos.z;
+					pos2 = {x=pos1.x,y=pos1.y,z=pos1.z};
+				else
+					local post = {x=pos1.x,y=pos1.y,z=pos1.z};
+					pos1 = {x=pos2.x,y=pos2.y,z=pos2.z};
+					pos2 = {x=post.x,y=post.y,z=post.z};
 				end
+			end
 
-				-- upgrade decreases fuel cost
-				fuel_cost = fuel_cost / upgrade
 
-				-- free operation for admin
-				if upgrade == -1 then
+			-- PROTECTION CHECK
+			local owner = meta:get_string("owner");
+			if (minetest.is_protected(pos1, owner) or minetest.is_protected(pos2, owner)) and mode~="object" then
+				meta:set_string("infotext", "Mover block. Protection fail. ")
+			return
+			end
+
+			local node1 = minetest.get_node(pos1);local node2 = minetest.get_node(pos2);
+			local prefer = meta:get_string("prefer");
+			prefer = check_abuse(prefer)
+			meta:set_string("prefer",prefer)
+
+			-- FUEL COST: calculate
+			local dist = math.abs(pos2.x-pos1.x)+math.abs(pos2.y-pos1.y)+math.abs(pos2.z-pos1.z);
+			local hardness = basic_machines.hardness[node1.name];
+			-- no free teleports from machine blocks
+			if hardness == 0 and mode == "object" then hardness = 1 end
+			local fuel_cost = hardness or 1;
+
+			local upgrade =  meta:get_float("upgrade") or 1;
+
+			-- taking items from chests/inventory move
+			if node1.name == "default:chest_locked" or mode == "inventory" then fuel_cost = basic_machines.hardness[prefer] or 1 end;
+
+			fuel_cost=fuel_cost*dist/machines_operations; -- machines_operations=10 by default, so 10 basic operations possible with 1 coal
+			if mode == "object" then
+				fuel_cost=fuel_cost*0.1;
+				if (x2 == 0 and y2 == 0) or (x2==0 and z2==0) or (y2==0 and z2 == 0) then -- check if elevator mode
+					local requirement = math.floor((math.abs(pos2.x-pos.x)+math.abs(pos2.y-pos.y)+math.abs(pos2.z-pos.z))/100)+1;
+					if upgrade-1<requirement then
+						meta:set_string("infotext","MOVER: Elevator error. Need at least "..requirement .. " diamond block(s) in upgrade (1 for every 100 distance). ");
+						return;
+					end
 					fuel_cost = 0
 				end
+			elseif mode == "inventory" then
+				fuel_cost=fuel_cost*0.1;
+			end
 
-				-- FUEL OPERATIONS
-				-- needs fuel to operate, find nearby battery
-				if fuel < fuel_cost then
-					local found_fuel = 0
+			fuel_cost = fuel_cost/upgrade; -- upgrade decreases fuel cost
+			if upgrade == -1 then fuel_cost = 0 end -- free operation for admin
 
-					-- cached battery position
-					local fpos = {
-						x = meta:get_int("batx"),
-						y = meta:get_int("baty"),
-						z = meta:get_int("batz")
-					}
 
-					-- check battery for power
-					local power_draw = fuel_cost
+			-- FUEL OPERATIONS
+			if fuel<fuel_cost then -- needs fuel to operate, find nearby battery
 
-					-- at least 10 one block operations with 1 refuel
-					if power_draw < 1 then
-						power_draw = 1
-					end
+				local found_fuel = 0;
 
-					local supply = basic_machines.check_power(fpos, power_draw)
+				-- cached battery position
+				local fpos = {x=meta:get_int("batx"), y=meta:get_int("baty"), z=meta:get_int("batz")};
 
-					if supply > 0 then
-						found_fuel = supply
-					-- no battery at target location, try to find it!
-					elseif supply < 0 then
-						local fpos = find_and_connect_battery(pos)
+				-- check battery for power
 
-						if not fpos then
-							meta:set_string("infotext", "Can not find nearby battery to connect to!")
+				local power_draw = fuel_cost;
+				if power_draw<1 then power_draw = 1 end -- at least 10 one block operations with 1 refuel
+				local supply = basic_machines.check_power(fpos, power_draw);
 
-							minetest.sound_play("default_cool_lava", {
-								pos = pos,
-								gain = 1.0,
-								max_hear_distance = 8
-							})
-
-							return
-						end
-					end
-
-					if found_fuel ~= 0 then
-						fuel = fuel + found_fuel
-						meta:set_float("fuel", fuel)
-						meta:set_string("infotext", "Mover block refueled. Fuel ".. fuel)
-					end
-				end
-
-				if fuel < fuel_cost then
-					meta:set_string("infotext", "Mover block. Energy ".. fuel ..", needed energy " .. fuel_cost .. ". Put nonempty battery next to mover.")
-					return
-				end
-
-				-- teleport objects and return
-				if mode == "object" then
-					-- if target is chest put items in it
-					local target_chest = false
-
-					if node2.name == "default:chest" or
-						 node2.name == "default:chest_locked" then
-						target_chest = true
-					end
-
-					local r = math.max(math.abs(x1), math.abs(y1), math.abs(z1))
-					r = math.min(r, 10)
-					local teleport_any = false
-
-					-- put objects in target chest
-					if target_chest then
-						local cmeta = minetest.get_meta(pos2)
-						local inv = cmeta:get_inventory()
-
-						for _,obj in pairs(minetest.get_objects_inside_radius({x=x0+pos.x,y=y0+pos.y,z=z0+pos.z}, r)) do
-							local lua_entity = obj:get_luaentity()
-
-							if not obj:is_player() and lua_entity and lua_entity.itemstring ~= "" then
-								local detected_obj = lua_entity.name or ""
-
-								-- object on no teleport list
-								if not basic_machines.no_teleport_table[detected_obj] then
-									-- put item in chest
-									local stack = ItemStack(lua_entity.itemstring)
-
-									if inv:room_for_item("main", stack) then
-										teleport_any = true
-										inv:add_item("main", stack)
-									end
-
-									-- patch for dupe, might not be needed if future minetest object management is better
-									obj:setpos({x = 0, y = 0, z = 0})
-									obj:remove()
-								end
-							end
-						end
-
-						if teleport_any then
-							fuel = fuel - fuel_cost
-							meta:set_float("fuel", fuel)
-							meta:set_string("infotext", "Mover block. Fuel "..fuel)
-
-							minetest.sound_play("tng_transporter1", {
-								pos = pos2,
-								gain = 1.0,
-								max_hear_distance = 8
-							})
-						end
+				if supply>0 then
+					found_fuel=supply;
+				elseif supply<0 then -- no battery at target location, try to find it!
+					local fpos = find_and_connect_battery(pos);
+					if not fpos then
+						meta:set_string("infotext", "Can not find nearby battery to connect to!");
+						minetest.sound_play("default_cool_lava", {pos=pos,gain=1.0,max_hear_distance = 8,})
 						return
 					end
 
-					local times = basic_machines.tonumber(prefer) or 0
+				end
 
-					if times > 20 then
-						times = 20
-					elseif times < 0.2 then
-						times = 0
-					end
+				if found_fuel~=0 then
+					fuel = fuel+found_fuel;
+					meta:set_float("fuel", fuel);
+					meta:set_string("infotext", "Mover block refueled. Fuel ".. fuel);
 
-					local velocityv
+				end
 
-					if times ~= 0 then
-						velocityv = {
-							x = pos2.x - x0 - pos.x,
-							y = pos2.y - y0 - pos.y,
-							z = pos2.z - z0 - pos.z
-						}
+			end
 
-						local vv = math.sqrt(velocityv.x * velocityv.x + velocityv.y * velocityv.y + velocityv.z * velocityv.z)
-						local velocitys = 0
+			if fuel < fuel_cost then
+				meta:set_string("infotext", "Mover block. Energy ".. fuel ..", needed energy " .. fuel_cost .. ". Put nonempty battery next to mover.");
+				return
+			end
 
-						if times ~= 0 then
-							velocitys = vv/times
-						else
-							vv = 0
-						end
 
-						if vv ~= 0 then
-							vv = velocitys/vv
-						else
-							vv = 0
-						end
+		if mode == "object" then -- teleport objects and return
 
-						velocityv.x = velocityv.x * vv;	velocityv.y = velocityv.y * vv;	velocityv.z = velocityv.z* vv
-					end
+			-- if target is chest put items in it
+			local target_chest = false
+			if node2.name == "default:chest" or node2.name == "default:chest_locked" then
+				target_chest = true
+			end
+			local r = math.max(math.abs(x1),math.abs(y1),math.abs(z1)); r = math.min(r,10);
+			local teleport_any = false;
 
-				--minetest.chat_send_all(" times ".. times .. " v " .. minetest.pos_to_string(velocityv));
+			if target_chest then -- put objects in target chest
+				local cmeta = minetest.get_meta(pos2);
+				local inv = cmeta:get_inventory();
 
-				-- move objects to another location
-				local finalsound = true
-
-				for _, obj in pairs(minetest.get_objects_inside_radius({x=x0+pos.x,y=y0+pos.y,z=z0+pos.z}, r)) do
-
-					if obj:is_player() then
-						-- move player only from owners land
-						if not minetest.is_protected(obj:getpos(), owner) and
-							 (prefer == "" or obj:get_player_name() == prefer) then
-							obj:moveto(pos2, false)
-							teleport_any = true
-						end
-					else
-						local lua_entity = obj:get_luaentity()
+				for _,obj in pairs(minetest.get_objects_inside_radius({x=x0+pos.x,y=y0+pos.y,z=z0+pos.z}, r)) do
+					local lua_entity = obj:get_luaentity()
+					if not obj:is_player() and lua_entity and lua_entity.itemstring ~= "" then
 						local detected_obj = lua_entity.name or ""
+						if not basic_machines.no_teleport_table[detected_obj] then -- object on no teleport list
+							-- put item in chest
+							local stack = ItemStack(lua_entity.itemstring)
+							if inv:room_for_item("main", stack) then
+								teleport_any = true;
+								inv:add_item("main", stack);
+							end
+							--obj:setpos({x=0,y=0,z=0}); --Gundul says:management was fixed--  patch for dupe, might not be needed if future minetest object management is better
+							obj:remove();
+						end
+					end
+				end
+				if teleport_any then
+					fuel = fuel - fuel_cost; meta:set_float("fuel",fuel);
+					meta:set_string("infotext", "Mover block. Fuel "..fuel);
+					minetest.sound_play("tng_transporter1", {pos=pos2,gain=1.0,max_hear_distance = 8,})
+				end
+				return
+			end
 
-						-- object on no teleport list
-						if not basic_machines.no_teleport_table[detected_obj] then
-							if times > 0 then
-								local finalmove = true
-								-- move objects with set velocity in target direction
-								obj:setvelocity(velocityv);
+			local times = tonumber(prefer) or 0; if times > 20 then times = 20 elseif times<0.2 then times = 0 end
+			local velocityv;
+			if times~=0 then
+				velocityv = { x = pos2.x-x0-pos.x, y = pos2.y-y0-pos.y, z = pos2.z-z0-pos.z};
+				local vv=math.sqrt(velocityv.x*velocityv.x+velocityv.y*velocityv.y+velocityv.z*velocityv.z);
+				local velocitys=0;
+				if times~=0 then velocitys = vv/times else vv = 0 end
+				if vv ~= 0 then vv=velocitys/vv else vv =  0 end;
+				velocityv.x = velocityv.x * vv;	velocityv.y = velocityv.y * vv;	velocityv.z = velocityv.z* vv
+			end
 
-								-- interaction with objects like carts
-								if obj:get_luaentity() then
-									if lua_entity.name then
-										-- move balls for free
-										if lua_entity.name == "basic_machines:ball" then
-											lua_entity.velocity = {x=velocityv.x*times,y=velocityv.y*times,z=velocityv.z*times}
-											finalmove = false
-											finalsound = false
-										end
+			--minetest.chat_send_all(" times ".. times .. " v " .. minetest.pos_to_string(velocityv));
 
-										-- just accelerate cart
-										if lua_entity.name == "carts:cart" then
-											lua_entity.velocity = {x=velocityv.x*times,y=velocityv.y*times,z=velocityv.z*times}
-											fuel = fuel - fuel_cost; meta:set_float("fuel",fuel)
-											meta:set_string("infotext", "Mover block. Fuel "..fuel)
-											return
-										end
+			-- move objects to another location
+			local finalsound = true;
+			for _,obj in pairs(minetest.get_objects_inside_radius({x=x0+pos.x,y=y0+pos.y,z=z0+pos.z}, r)) do
+				if obj:is_player() then
+					if not minetest.is_protected(obj:get_pos(), owner) and (prefer == "" or obj:get_player_name()== prefer) then -- move player only from owners land
+						obj:move_to(pos2, false)
+						teleport_any = true;
+					end
+				else
+
+					local lua_entity = obj:get_luaentity();
+					local detected_obj = lua_entity.name or ""
+					if not basic_machines.no_teleport_table[detected_obj] then -- object on no teleport list https://bitbucket.org/kingarthursteam/beer-test/wiki/Home
+
+						if times > 0 then
+							local finalmove = true;
+							-- move objects with set velocity in target direction
+							obj:setvelocity(velocityv);
+							if obj:get_luaentity() then -- interaction with objects like carts
+								if lua_entity.name then
+									if lua_entity.name == "basic_machines:ball" then -- move balls for free
+										lua_entity.velocity = {x=velocityv.x*times,y=velocityv.y*times,z=velocityv.z*times};
+										finalmove = false;
+										finalsound = false;
+									end
+									if lua_entity.name == "carts:cart" then -- just accelerate cart
+										lua_entity.velocity = {x=velocityv.x*times,y=velocityv.y*times,z=velocityv.z*times};
+										fuel = fuel - fuel_cost; meta:set_float("fuel",fuel);
+										meta:set_string("infotext", "Mover block. Fuel "..fuel);
+										return;
 									end
 								end
-
-								-- dont move objects like balls to destination after delay
-								if finalmove then
-									minetest.after(times, function()
-										if obj then
-											obj:setvelocity({x = 0, y = 0, z = 0})
-											obj:moveto(pos2, false)
-										end
-									end)
-								end
-							else
-								obj:moveto(pos2, false)
 							end
+							--obj:setacceleration({x=0,y=0,z=0});
+							if finalmove then -- dont move objects like balls to destination after delay
+								minetest.after(times, function () if obj then obj:setvelocity({x=0,y=0,z=0}); obj:move_to(pos2, false) end end);
+							end
+						else
+								obj:move_to(pos2, false)
 						end
-
-						teleport_any = true
 					end
+					teleport_any = true;
 				end
+			end
 
-				if teleport_any then
-					fuel = fuel - fuel_cost
-					meta:set_float("fuel", fuel)
-					meta:set_string("infotext", "Mover block. Fuel "..fuel)
+			if teleport_any then
+				fuel = fuel - fuel_cost; meta:set_float("fuel",fuel);
+				meta:set_string("infotext", "Mover block. Fuel "..fuel);
+				if finalsound then minetest.sound_play("tng_transporter1", {pos=pos2,gain=1.0,max_hear_distance = 8,}) end
+			end
 
-					if finalsound then
-						minetest.sound_play("tng_transporter1", {
-							pos = pos2,
-							gain = 1.0,
-							max_hear_distance = 8
-						})
-					end
-				end
+			return
+		end
 
-				return
-				end
 
-				local dig = false
-				-- digs at target location
-				if mode == "dig" then
-					dig = true
-				end
+		local dig=false; if mode == "dig" then dig = true; end -- digs at target location
+		local drop = false; if mode == "drop" then drop = true; end -- drops node instead of placing it
+		local harvest = false; -- harvest mode for special nodes: mese crystals
 
-				local drop = false
-				-- drops node instead of placing it
-				if mode == "drop" then
-					drop = true
-				end
 
-				-- harvest mode for special nodes: mese crystals
-				local harvest = false
+		-- decide what to do if source or target are chests
+		local source_chest=false; if string.find(node1.name,"default:chest") then source_chest=true end
+		if node1.name == "air" then return end -- nothing to move
 
-				-- decide what to do if source or target are chests
-				local source_chest = false
+		local target_chest = false
+		if node2.name == "default:chest" or node2.name == "default:chest_locked" then
+			target_chest = true
+		end
 
-				if string.find(node1.name, "default:chest") then
-					source_chest = true
-				end
+		if not(target_chest) and not(mode=="inventory") and minetest.get_node(pos2).name ~= "air" then return end -- do nothing if target nonempty and not chest
 
-				-- nothing to move
-				if node1.name == "air" then
-					return
-				end
+		local invName1="";local invName2="";
+		if mode == "inventory" then
+			invName1 = meta:get_string("inv1");invName2 = meta:get_string("inv2");
+			if mreverse == 1 then -- reverse inventory names too
+				local invNamet = invName1;invName1=invName2;invName2=invNamet;
+			end
+		end
 
-				local target_chest = false
 
-				if node2.name == "default:chest" or
-					 node2.name == "default:chest_locked" then
-					target_chest = true
-				end
-
-				-- do nothing if target nonempty and not chest
-				if not target_chest and
-					 not (mode == "inventory") and
-					 minetest.get_node(pos2).name ~= "air" then
-					 return
-				end
-
-				local invName1 = ""
-				local invName2 = ""
-
-				if mode == "inventory" then
-					invName1 = meta:get_string("inv1")
-					invName2 = meta:get_string("inv2")
-
-					-- reverse inventory names too
-					if mreverse == 1 then
-						local invNamet = invName1
-						invName1 = invName2
-						invName2 = invNamet
-					end
-				end
-
-				-- inventory mode
-				if mode == "inventory" then
+		-- inventory mode
+		if mode == "inventory" then
 					--if prefer == "" then meta:set_string("infotext", "Mover block. must set nodes to move (filter) in inventory mode."); return; end
 
-					-- forbidden nodes to take from in inventory mode - to prevent abuses
+					-- forbidden nodes to take from in inventory mode - to prevent abuses :
 					if basic_machines.limit_inventory_table[node1.name] then
-						-- forbidden to take from this inventory
-						if basic_machines.limit_inventory_table[node1.name][invName1] then
+						if basic_machines.limit_inventory_table[node1.name][invName1] then -- forbidden to take from this inventory
 							return
 						end
 					end
 
-					local stack, meta1, inv1
-					-- if prefer == "" then just pick one item from chest to transfer
-					if prefer == "" then
-						meta1 = minetest.get_meta(pos1)
-						inv1 = meta1:get_inventory()
+					local stack, meta1,inv1;
+					if prefer == "" then -- if prefer == "" then just pick one item from chest to transfer
+						meta1 = minetest.get_meta(pos1);
+						inv1 = meta1:get_inventory();
+						if inv1:is_empty(invName1) then return end -- nothing to move
 
-						-- nothing to move
-						if inv1:is_empty(invName1) then
-							return
-						end
+						local size = inv1:get_size(invName1);
 
-						local size = inv1:get_size(invName1)
-
-						local found = false
-
-						-- find item to move in inventory
-						for i = 1, size do
-							stack = inv1:get_stack(invName1, i)
-
-							-- prevent item stacks with more than 'stack_max' items
-							if stack:get_count() > stack:get_stack_max() then
-								stack:set_count(stack:get_stack_max())
-							else
-								stack:set_count(stack:get_count())
-							end
-
+						local found = false;
+						for i = 1, size do -- find item to move in inventory
+							stack = inv1:get_stack(invName1, i);
 							if not stack:is_empty() then found = true break end
 						end
 						if not found then return end
 					end
 
 					-- can we move item to target inventory?
-					if prefer ~= "" then
-						meta1 = minetest.get_meta(pos1)
-						inv1 = meta1:get_inventory()
-
-						-- nothing to move
-						if inv1:is_empty(invName1) then
-							return
-						end
-
-						local size = inv1:get_size(invName1)
-						local preferstack = ItemStack(prefer)
-
-						local found = false
-
-						-- find item to move in inventory
-						for i = 1, size do
-							stack = inv1:get_stack(invName1, i)
-
-							if stack:get_name() == preferstack:get_name() then
-								-- prevent item stacks with more than 'stack_max' items
-								if preferstack:get_count() > preferstack:get_stack_max() then
-									stack:set_count(preferstack:get_stack_max())
-								else
-									stack:set_count(preferstack:get_count())
-								end
-
-								found = true
-								break
-							end
-						end
-
-						if not found then
-							return
-						end
+					if prefer~="" then
+						stack = ItemStack(prefer);
 					end
-
-					local meta2 = minetest.get_meta(pos2)
-					local inv2 = meta2:get_inventory()
-
-					if not inv2:room_for_item(invName2, stack) then
-						return
-					end
+					local meta2 = minetest.get_meta(pos2); local inv2 = meta2:get_inventory();
+					if not inv2:room_for_item(invName2, stack) then	return end
 
 					-- add item to target inventory and remove item from source inventory
-					if prefer ~= "" then
-						meta1 = minetest.get_meta(pos1)
-						inv1 = meta1:get_inventory()
+					if prefer~="" then
+						meta1 = minetest.get_meta(pos1); inv1 = meta1:get_inventory();
 					end
 
 					if inv1:contains_item(invName1, stack) then
-						inv2:add_item(invName2, stack)
-						inv1:remove_item(invName1, stack)
+						local copy = inv1:remove_item(invName1, stack);
+						inv2:add_item(invName2, copy);
+
 					else
-						-- admin is owner.. just add stuff
-						if upgrade == -1 then
-							inv2:add_item(invName2, stack)
-
-						-- item not found in chest
+						if upgrade == -1 then -- admin is owner.. just add stuff
+							inv2:add_item(invName2, stack);
 						else
-							return
+							return -- item not found in chest
 						end
 					end
 
-					minetest.sound_play("chest_inventory_move", {
-						pos = pos2,
-						gain = 1.0,
-						max_hear_distance = 8
-					})
-
-					fuel = fuel - fuel_cost
-					meta:set_float("fuel", fuel)
-					meta:set_string("infotext", "Mover block. Fuel "..fuel)
-
+					minetest.sound_play("chest_inventory_move", {pos=pos2,gain=1.0,max_hear_distance = 8,})
+					fuel = fuel - fuel_cost; meta:set_float("fuel",fuel);
+					meta:set_string("infotext", "Mover block. Fuel "..fuel);
 					return
 				end
 
-				-- filtering
-				-- prefered node set
-				if prefer ~= "" then
-					-- only take prefered node or from chests/inventories
-					if prefer ~= node1.name and
-						 not source_chest and
-						 mode ~= "inventory" then
-							return
-					end
+		-- filtering
+		if prefer~="" then -- prefered node set
+			if prefer~=node1.name and not source_chest and mode ~= "inventory"  then return end -- only take prefered node or from chests/inventories
+			if source_chest then -- take stuff from chest
 
-					-- take stuff from chest
-					if source_chest then
-						local cmeta = minetest.get_meta(pos1)
-						local inv = cmeta:get_inventory()
-						local stack = ItemStack(prefer)
+				local cmeta = minetest.get_meta(pos1);
+				local inv = cmeta:get_inventory();
+				local stack = ItemStack(prefer);
 
-						-- prevent item stacks with more than 'stack_max' items
-						if stack:get_count() > stack:get_stack_max() then
-							stack:set_count(stack:get_stack_max())
-						else
-							stack:set_count(stack:get_count())
-						end
 
-						if inv:contains_item("main", stack) then
-							inv:remove_item("main", stack)
-						else
-							return
-						end
-					end
-
-					node1 = {}
-					node1.name = prefer
-				end
-
-				-- doesnt know what to take out of chest/inventory
-				if (prefer == "" and source_chest) then
+				if inv:contains_item("main", stack) then
+					 copystack = inv:remove_item("main", stack);
+				else
+					copystack = nil
 					return
 				end
 
-				-- if target chest put in chest
-				if target_chest then
-					local cmeta = minetest.get_meta(pos2)
-					local inv = cmeta:get_inventory()
-
-					-- dig tree or cactus
-					-- check for cactus or tree
-					local count = 0
-					-- digs up node as a tree
-					local dig_up = false
-
-					if dig then
-						if not source_chest and
-							 basic_machines.dig_up_table[node1.name] then
-							dig_up = true
-						end
-
-						-- do we harvest the node? (only for mese crystals)
-						if not source_chest then
-							if basic_machines.harvest_table[node1.name] ~= nil then
-								harvest = true
-
-								local remains = basic_machines.harvest_table[node1.name][1]
-								local result = basic_machines.harvest_table[node1.name][2]
-								minetest.set_node(pos1,{name = remains})
-								inv:add_item("main", result)
-							end
-						end
-
-						-- dig up to 16 nodes
-						if dig_up == true then
-							local r = 1
-							if node1.name == "default:cactus" or
-								 node1.name == "default:papyrus" then
-								r = 0
-							end
-
-							-- acacia trees grow wider than others
-							if node1.name == "default:acacia_tree" then
-								r = 2
-							end
-
-							local positions = minetest.find_nodes_in_area({x = pos1.x - r, y = pos1.y, z = pos1.z - r}, {x = pos1.x + r, y = pos1.y + 16, z = pos1.z + r}, node1.name)
-
-							local def = minetest.registered_nodes[node1.name]
-							local distance_ok = vector.distance(pos1, pos2) <= 16
-							local texture = "default_dirt.png"
-
-							-- try to find a node texture
-							if def then
-								if def.tiles then
-									if #def.tiles > 0 then
-										if type(def.tiles[1]) == "string" then
-											texture = def.tiles[1]
-										end
-									end
-								end
-							end
-
-							for _, pos3 in ipairs(positions) do
-								minetest.set_node(pos3, {name = "air"})
-								count = count + 1
-
-								-- add particles only when not too far
-								if distance_ok then
-									minetest.add_particlespawner({
-										amount = math.random(1, 3),
-										time = 0.5,
-										minpos = {x=pos3.x-0.7, y=pos3.y, z=pos3.z-0.7},
-										maxpos = {x=pos3.x+0.7, y=pos3.y+0.75, z=pos3.z+0.7},
-										minvel = {x = -0.5, y = -4, z = -0.5},
-										maxvel = {x = 0.5,  y = -2, z = 0.5},
-										minacc = {x = -0.5, y = -4, z = -0.5},
-										maxacc = {x = 0.5,  y = -2, z = 0.5},
-										minexptime = 0.5,
-										maxexptime = 1,
-										minsize = 0.5,
-										maxsize = 2,
-										collisiondetection = true,
-										texture = texture
-									})
-								end
-							end
-
-							-- if tree or cactus was digged up
-							inv:add_item("main", node1.name.." "..count - 1)
-						end
-
-						-- minetest drop code emulation
-						if not harvest then
-							local table = minetest.registered_items[node1.name]
-
-							if table ~= nil then --put in chest
-								if table.drop ~= nil then -- drop handling
-									if table.drop.items then
-										--handle drops better, emulation of drop code
-										local max_items = table.drop.max_items or 0
-
-										if max_items == 0 then -- just drop all the items (taking the rarity into consideration)
-											max_items = #table.drop.items or 0
-										end
-
-										local drop = table.drop
-										local i = 0
-
-										for k, v in pairs(drop.items) do
-											if i > max_items then
-												break
-											end
-
-											i = i + 1
-
-											local rare = v.rarity or 1
-
-											if math.random(1, rare) == 1 then
-												node1 = {}
-												-- pick item randomly from list
-												node1.name = v.items[math.random(1, #v.items)]
-												inv:add_item("main",node1.name)
-											end
-										end
-									else
-										inv:add_item("main", table.drop)
-									end
-								else
-									inv:add_item("main", node1.name)
-								end
-							end
-						end
-
-					-- if not dig just put it in
-					else
-						inv:add_item("main", node1.name)
-					end
-				end
-
-				minetest.sound_play("transporter", {
-					pos = pos2,
-					gain = 1.0,
-					max_hear_distance = 8
-				})
-
-				-- chest to chest transport has lower cost, *0.1
-				if target_chest and source_chest then
-					fuel_cost = fuel_cost * 0.1
-				end
-
-				fuel = fuel - fuel_cost
-				meta:set_float("fuel", fuel)
-				meta:set_string("infotext", "Mover block. Fuel "..fuel)
-
-				-- transport nodes parallel as defined by source1 and target, clone with complete metadata
-				if mode == "transport" then
-					local meta1 = minetest.get_meta(pos1):to_table()
-
-					minetest.set_node(pos2, minetest.get_node(pos1))
-					minetest.get_meta(pos2):from_table(meta1)
-					minetest.set_node(pos1,{name = "air"})
-					minetest.get_meta(pos1):from_table(nil)
-
-					return
-				end
-
-				-- REMOVE DIGGED NODE
-				if not target_chest then
-					if not drop then
-						-- get node (seed) table definition
-						local def = minetest.registered_nodes[node1.name]
-						local name_parts = node1.name:split(":")
-
-						-- create pointed_thing table
-						local pointed_thing = {
-							type = "node",
-							above = {
-								y = pos2.y,
-								x = pos2.x,
-								z = pos2.z
-							},
-							under = {
-								y = pos2.y - 1,
-								x = pos2.x,
-								z = pos2.z
-							}
-						}
-
-						-- create ItemStack table
-						local stack = ItemStack(node1.name)
-						local placer = minetest.get_player_by_name(owner)
-
-						-- use default behaviour on_place if found in def
-						if def and
-							 def.on_place and
-							 placer ~= nil and
-							 (name_parts[1] == "farming" or name_parts[1] == "farming_addons" ) then
-
-							def.on_place(stack, placer, pointed_thing)
-
-							-- add particles only when not too far
-							if vector.distance(pos1, pos2) <= 16 then
-								local texture = "default_dirt.png"
-
-								-- try to find a node texture
-								if def.tiles then
-									if #def.tiles > 0 then
-										if type(def.tiles[1]) == "string" then
-											texture = def.tiles[1]
-										end
-									end
-								end
-
-								minetest.add_particlespawner({
-									amount = math.random(3, 6),
-									time = 0.5,
-									minpos = {x=pos2.x-0.7, y=pos2.y, z=pos2.z-0.7},
-									maxpos = {x=pos2.x+0.7, y=pos2.y+0.75, z=pos2.z+0.7},
-									minvel = {x = -0.5, y = -4, z = -0.5},
-									maxvel = {x = 0.5,  y = -2, z = 0.5},
-									minacc = {x = -0.5, y = -4, z = -0.5},
-									maxacc = {x = 0.5,  y = -2, z = 0.5},
-									minexptime = 0.5,
-									maxexptime = 1,
-									minsize = 0.5,
-									maxsize = 2,
-									collisiondetection = true,
-									texture = texture
-								})
-							end
-
-						-- on_place not found in def - use set_node instead
-						else
-							minetest.set_node(pos2, {name = node1.name})
-
-							if def then
-								-- add particles only when not too far
-								if vector.distance(pos1, pos2) <= 16 then
-									local texture = "default_dirt.png"
-
-									-- try to find a node texture
-									if def.tiles then
-										if #def.tiles > 0 then
-											if type(def.tiles[1]) == "string" then
-												texture = def.tiles[1]
-											end
-										end
-									end
-
-									minetest.add_particlespawner({
-										amount = math.random(3, 6),
-										time = 0.5,
-										minpos = {x=pos2.x-0.7, y=pos2.y, z=pos2.z-0.7},
-										maxpos = {x=pos2.x+0.7, y=pos2.y+0.75, z=pos2.z+0.7},
-										minvel = {x = -0.5, y = -4, z = -0.5},
-										maxvel = {x = 0.5,  y = -2, z = 0.5},
-										minacc = {x = -0.5, y = -4, z = -0.5},
-										maxacc = {x = 0.5,  y = -2, z = 0.5},
-										minexptime = 0.5,
-										maxexptime = 1,
-										minsize = 0.5,
-										maxsize = 2,
-										collisiondetection = true,
-										texture = texture
-									})
-								end
-							end
-
-						end
-					end
-
-					if drop then
-						local stack = ItemStack(node1.name)
-						-- drops it
-						minetest.add_item(pos2,stack)
-					end
-				end
-
-				if not (source_chest) and not (harvest) then
-					if dig then
-						minetest.check_for_falling(pos1)
-					end
-					local def = minetest.registered_nodes[node1.name]
-
-					minetest.set_node(pos1, {name = "air"})
-
-					if def then
-						-- add particles only when not too far
-						if vector.distance(pos1, pos2) <= 16 then
-							local texture = "default_dirt.png"
-
-							-- try to find a node texture
-							if def.tiles then
-								if #def.tiles > 0 then
-									if type(def.tiles[1]) == "string" then
-										texture = def.tiles[1]
-									end
-								end
-							end
-
-							minetest.add_particlespawner({
-								amount = math.random(3, 6),
-								time = 0.5,
-								minpos = {x=pos1.x-0.5, y=pos1.y, z=pos1.z-0.5},
-								maxpos = {x=pos1.x+0.5, y=pos1.y+0.75, z=pos1.z+0.5},
-								minvel = {x = -0.5, y = -4, z = -0.5},
-								maxvel = {x = 0.5,  y = -2, z = 0.5},
-								minacc = {x = -0.5, y = -4, z = -0.5},
-								maxacc = {x = 0.5,  y = -2, z = 0.5},
-								minexptime = 0.5,
-								maxexptime = 1,
-								minsize = 0.5,
-								maxsize = 2,
-								collisiondetection = true,
-								texture = texture
-							})
-						end
-					end
-
-				end
-			end, -- /action_on - mover
-
-			-- this toggles reverse option of mover
-			action_off = function(pos, node,ttl)
-				if type(ttl) ~= "number" then
-					ttl = 1
-				end
-
-				local meta = minetest.get_meta(pos)
-				local mreverse = meta:get_int("reverse")
-				local mode = meta:get_string("mode")
-
-				-- reverse switching is not very helpful when auto harvest trees for example
-				if mode ~= "dig" then
-					if mreverse == 1 then
-						mreverse = 0
-					elseif mreverse == 0 then
-						mreverse = 1
-					end
-
-					meta:set_int("reverse", mreverse)
+				if mreverse == 1 then -- planting mode: check if transform seed->plant is needed
+				if basic_machines.plant_table[prefer]~=nil then
+					prefer = basic_machines.plant_table[prefer];
 				end
 			end
-		} -- /effector - mover
+			end
+
+			node1 = {}; node1.name = prefer;
+		end
+
+		if (prefer == "" and source_chest) then return end -- doesnt know what to take out of chest/inventory
+
+
+		-- if target chest put in chest
+		if target_chest then
+			local cmeta = minetest.get_meta(pos2);
+			local inv = cmeta:get_inventory();
+
+			-- dig tree or cactus
+			local count = 0;-- check for cactus or tree
+			local dig_up = false; -- digs up node as a tree
+			if dig then
+
+
+				if not source_chest and basic_machines.dig_up_table[node1.name] then dig_up = true end
+				-- do we harvest the node?
+				if not source_chest then
+					if basic_machines.harvest_table[node1.name]~=nil then
+						harvest = true
+						local remains = basic_machines.harvest_table[node1.name][1];
+						local result = basic_machines.harvest_table[node1.name][2];
+						minetest.set_node(pos1,{name=remains});
+						inv:add_item("main",result);
+					end
+				end
+
+
+				if dig_up == true then -- dig up to 16 nodes
+
+					local r = 1;
+					if node1.name == "default:cactus" or node1.name == "default:papyrus" then r = 0 end
+					if node1.name == "default:acacia_tree" then r = 2 end -- acacia trees grow wider than others
+
+					local positions = minetest.find_nodes_in_area( --
+					{x=pos1.x-r, y=pos1.y, z=pos1.z-r},
+					{x=pos1.x+r, y=pos1.y+16, z=pos1.z+r},
+					node1.name)
+
+					for _, pos3 in ipairs(positions) do
+						--if count>16 then break end
+						minetest.set_node(pos3,{name="air"}); count = count+1;
+					end
+
+					inv:add_item("main", node1.name .. " " .. count-1);-- if tree or cactus was digged up
+				end
+
+
+				-- minetest drop code emulation
+				if not harvest then
+					local table = minetest.registered_items[node1.name];
+					if table~=nil then --put in chest
+						if table.drop~= nil then -- drop handling
+							if table.drop.items then
+							--handle drops better, emulation of drop code
+							local max_items = table.drop.max_items or 0;
+								if max_items==0 then -- just drop all the items (taking the rarity into consideration)
+									max_items = #table.drop.items or 0;
+								end
+								local drop = table.drop;
+								local i = 0;
+								for k,v in pairs(drop.items) do
+									if i > max_items then break end; i=i+1;
+									local rare = v.rarity or 1;
+									if math.random(1, rare)==1 then
+										node1={};node1.name = v.items[math.random(1,#v.items)]; -- pick item randomly from list
+										inv:add_item("main",node1.name);
+
+									end
+								end
+							else
+								inv:add_item("main",table.drop);
+							end
+						else
+							inv:add_item("main",node1.name);
+						end
+					end
+				end
+
+			else -- if not dig just put it in
+			if copystack then
+			      inv:add_item("main",copystack);
+			else
+			      inv:add_item("main",node1.name);
+			end
+			copystack = nil
+			end
+
+		end
+
+
+		minetest.sound_play("transporter", {pos=pos2,gain=1.0,max_hear_distance = 8,})
+
+		if target_chest and source_chest then -- chest to chest transport has lower cost, *0.1
+			fuel_cost=fuel_cost*0.1;
+		end
+
+		fuel = fuel - fuel_cost; meta:set_float("fuel",fuel);
+		meta:set_string("infotext", "Mover block. Fuel "..fuel);
+
+
+		if mode == "transport" then -- transport nodes parallel as defined by source1 and target, clone with complete metadata
+			local meta1 = minetest.get_meta(pos1):to_table();
+
+			minetest.set_node(pos2, minetest.get_node(pos1));
+			minetest.get_meta(pos2):from_table(meta1);
+			minetest.set_node(pos1,{name="air"});minetest.get_meta(pos1):from_table(nil)
+			return;
+		end
+
+		-- REMOVE DIGGED NODE
+		if not(target_chest) then
+			if not drop and not core.registered_craftitems[node1.name] then
+                           minetest.set_node(pos2, {name = node1.name})
+            end
+			if drop then
+				local stack = ItemStack(node1.name);
+				minetest.add_item(pos2,stack) -- drops it
+			end
+		end
+		if not(source_chest) and not(harvest) then
+			if dig then minetest.check_for_falling(pos1) end
+			minetest.set_node(pos1, {name = "air"});
+			end
+		end,
+
+
+		action_off = function (pos, node,ttl) -- this toggles reverse option of mover
+			if type(ttl)~="number" then ttl = 1 end
+			local meta = minetest.get_meta(pos);
+			local mreverse = meta:get_int("reverse");
+			local mode = meta:get_string("mode");
+			if mode ~= "dig" then -- reverse switching is not very helpful when auto harvest trees for example
+			  if mreverse == 1 then mreverse = 0 elseif mreverse==0 then mreverse = 1 end
+			  meta:set_int("reverse",mreverse);
+			end
+		end
+
+
 	}
-}) -- /mover - register_node
+	}
+})
+
+
+-- moverfiltercheck
+
+local check_mover_filter = function(mode, filter, mreverse) -- mover input validation, is it correct node
+	if mode == "normal" or mode == "dig" then
+		local nodedef = minetest.registered_nodes[filter]
+		if mreverse==1 and basic_machines.plant_table[filter] then return true end -- allow farming
+		if not nodedef then return false end
+	end
+	return true
+end
+
 
 -- KEYPAD --
 
@@ -1522,7 +963,7 @@ local function use_keypad(pos,ttl, again) -- position, time to live ( how many t
 			text = string.sub(text,2) ; if not text or text == "" then return end
 			local players = minetest.get_connected_players();
 			for _,player in pairs(players) do
-				local pos1 = player:getpos();
+				local pos1 = player:get_pos();
 				local dist = math.sqrt((pos1.x-tpos.x)^2 + (pos1.y-tpos.y)^2 + (pos1.z-tpos.z)^2 );
 				if dist<=5 then
 					minetest.chat_send_player(player:get_player_name(), text)
@@ -1573,7 +1014,7 @@ local function use_keypad(pos,ttl, again) -- position, time to live ( how many t
 			elseif string.byte(text) == 37 then -- target keypad's text starts with % ( ascii code 37) -> word extraction
 
 				local ttext = minetest.get_meta({x=pos.x,y=pos.y+1,z=pos.z}):get_string("infotext")
-				local i = basic_machines.tonumber(string.sub(text,2,2)) or 1; --read the number following the %
+				local i = tonumber(string.sub(text,2,2)) or 1; --read the number following the %
 				--extract i-th word from text
 				 local j = 0;
 				 for word in string.gmatch(ttext, "%S+") do
@@ -1600,15 +1041,7 @@ local function use_keypad(pos,ttl, again) -- position, time to live ( how many t
 			if string.byte(text) == 64 then -- if text starts with @ clear the filter
 				tmeta:set_string("node","");
 			else
-				-- prevent item stacks with more than 'stack_max' items
-				local textstack = ItemStack(text)
-				if textstack:get_count() > textstack:get_stack_max() then
-					textstack:set_count(textstack:get_stack_max())
-				else
-					textstack:set_count(textstack:get_count())
-				end
-
-				tmeta:set_string("node", textstack:to_string());
+				tmeta:set_string("node",text);
 			end
 			return
 		end
@@ -1617,15 +1050,9 @@ local function use_keypad(pos,ttl, again) -- position, time to live ( how many t
 			if string.byte(text) == 64 then -- if text starts with @ clear the filter
 				tmeta:set_string("prefer","");
 			else
-				-- prevent item stacks with more than 'stack_max' items
-				local textstack = ItemStack(text)
-				if textstack:get_count() > textstack:get_stack_max() then
-					textstack:set_count(textstack:get_stack_max())
-				else
-					textstack:set_count(textstack:get_count())
+				if check_mover_filter(tmeta:get_string("mode"), text,tmeta:get_int("reverse")) then -- mover input validate
+					tmeta:set_string("prefer",text);
 				end
-
-				tmeta:set_string("prefer", textstack:to_string());
 			end
 			return
 		end
@@ -1633,8 +1060,8 @@ local function use_keypad(pos,ttl, again) -- position, time to live ( how many t
 		if node.name == "basic_machines:distributor" then
 			local i = string.find(text," ");
 			if i then
-				local ti = basic_machines.tonumber(string.sub(text,1,i-1)) or 1;
-				local tm = basic_machines.tonumber(string.sub(text,i+1)) or 1;
+				local ti = tonumber(string.sub(text,1,i-1)) or 1;
+				local tm = tonumber(string.sub(text,i+1)) or 1;
 				if ti>=1 and ti<=16 and tm>=-2 and tm<=2 then
 					tmeta:set_int("active"..ti,tm)
 				end
@@ -1684,9 +1111,6 @@ local function check_keypad(pos,name,ttl) -- called only when manually activated
 	if meta:get_string("text") == "@" then -- keypad works as a keyboard
 		local form  =
 		"size[3,1]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
 		"field[0.25,0.25;3,1;pass;Enter text: ;".."".."] button_exit[0.,0.5;1,1;OK;OK]";
 		minetest.show_formspec(name, "basic_machines:check_keypad_"..minetest.pos_to_string(pos), form)
 		return
@@ -1695,21 +1119,20 @@ local function check_keypad(pos,name,ttl) -- called only when manually activated
 	pass = ""
 	local form  =
 		"size[3,1.25]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
+		"bgcolor[#FF8888BB; false]" ..
 		"field[0.25,0.25;3,1;pass;Enter Password: ;".."".."] button_exit[0.,0.75;1,1;OK;OK]";
 		minetest.show_formspec(name, "basic_machines:check_keypad_"..minetest.pos_to_string(pos), form)
 	return
+
 end
 
 minetest.register_node("basic_machines:keypad", {
 	description = "Keypad - basic way to activate machines by sending signal",
 	tiles = {"keypad.png"},
 	groups = {cracky=3, mesecon_effector_on = 1},
-	sounds = default.node_sound_metal_defaults(),
+	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Keypad. Right click to set it up or punch it. Set any password and text \"@\" to work as keyboard.")
 		meta:set_string("owner", placer:get_player_name()); meta:set_int("public",1);
 		meta:set_int("x0",0);meta:set_int("y0",0);meta:set_int("z0",0); -- target
@@ -1745,9 +1168,7 @@ minetest.register_node("basic_machines:keypad", {
 		pass = meta:get_string("pass");
 		local form  =
 		"size[4.25,3.75]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
+		"bgcolor[#888888BB; false]" ..
 		"field[2.25,0.25;2.25,1;pass;Password: ;"..pass.."]" ..
 		"field[0.25,2.5;3.25,1;text;text;".. text .."]" ..
 		"field[0.25,0.25;1,1;mode;mode;"..mode.."]".. "field[1.25,0.25;1,1;iter;repeat;".. iter .."]"..
@@ -1775,9 +1196,9 @@ minetest.register_node("basic_machines:detector", {
 	description = "Detector - can detect blocks/players/objects and activate machines",
 	tiles = {"detector.png"},
 	groups = {cracky=3, mesecon_effector_on = 1},
-	sounds = default.node_sound_metal_defaults(),
+	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Detector. Right click/punch to set it up.")
 		meta:set_string("owner", placer:get_player_name()); meta:set_int("public",0);
 		meta:set_int("x0",0);meta:set_int("y0",0);meta:set_int("z0",0); -- source1: read
@@ -1835,9 +1256,6 @@ minetest.register_node("basic_machines:detector", {
 		local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
 		local form  =
 		"size[4,6.25]" ..  -- width, height
-		default.gui_bg..
-		default.gui_bg_img..
-		default.gui_slots..
 		"field[0.25,0.5;1,1;x0;source1;"..x0.."] field[1.25,0.5;1,1;y0;;"..y0.."] field[2.25,0.5;1,1;z0;;"..z0.."]"..
 		"dropdown[3,0.25;1,1;op; ,AND,OR;".. op .."]"..
 		"field[0.25,1.5;1,1;x1;source2;"..x1.."] field[1.25,1.5;1,1;y1;;"..y1.."] field[2.25,1.5;1,1;z1;;"..z1.."]"..
@@ -1858,22 +1276,10 @@ minetest.register_node("basic_machines:detector", {
 	end,
 
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return 0
-		end
-
 		return 0
 	end,
 
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return 0
-		end
-
 		return 0
 	end,
 
@@ -1895,6 +1301,8 @@ minetest.register_node("basic_machines:detector", {
 
 	mesecons = {effector = {
 		action_on = function (pos, node,ttl)
+
+            if type(ttl)~="number" then ttl = 1 end
 			if ttl<0 then return end
 
 			local meta = minetest.get_meta(pos);
@@ -1971,43 +1379,34 @@ minetest.register_node("basic_machines:detector", {
 				end
 
 			elseif mode=="inventory" then
-				local cmeta = minetest.get_meta({x = x0, y = y0, z = z0})
-				local inv = cmeta:get_inventory()
-				local stack = ItemStack(node)
-				local inv1m =meta:get_string("inv1")
+				local cmeta = minetest.get_meta({x=x0,y=y0,z=z0});
+				local inv = cmeta:get_inventory();
 
-				-- if there is item report name and trigger
-				if node == "" then
+				local inv1m =meta:get_string("inv1");
 
+				if node == "" then -- if there is item report name and trigger
 					if inv:is_empty(inv1m) then
 						trigger = false
-					-- nonempty
-					else
+					else -- nonempty
 						trigger = true
-						local size = inv:get_size(inv1m)
-
-						-- find item to move in inventory
-						for i = 1, size do
-							local stack = inv:get_stack(inv1m, i)
-							if not stack:is_empty() then
-								detected_obj = stack:to_string()
-								break
-							end
+						local size = inv:get_size(inv1m);
+						for i = 1, size do -- find item to move in inventory
+							local stack = inv:get_stack(inv1m, i);
+							if not stack:is_empty() then detected_obj = stack:to_string() break end
 						end
 					end
-
-				-- node name was set
-				else
+				else -- node name was set
 					local stack = ItemStack(node);
 					if inv:contains_item(inv1m, stack) then trigger = true end
 				end
+
 			elseif mode == "infotext" then
 				local cmeta = minetest.get_meta({x=x0,y=y0,z=z0});
 				detected_obj = cmeta:get_string("infotext");
 				if detected_obj == node or node =="" then trigger = true end
 			elseif mode == "light" then
 				detected_obj=minetest.get_node_light({x=x0,y=y0,z=z0}) or 0;
-				if detected_obj>=(basic_machines.tonumber(node) or 0) or node == "" then trigger = true end
+				if detected_obj>=(tonumber(node) or 0) or node == "" then trigger = true end
 			else -- players/objects
 				local objects = minetest.get_objects_inside_radius({x=x0,y=y0,z=z0}, r)
 				local player_near=false;
@@ -2088,26 +1487,26 @@ minetest.register_node("basic_machines:detector", {
 })
 
 
--- minetest.register_chatcommand("clockgen", { -- test: toggle machine running with clockgens, useful for debugging
--- -- i.e. seeing how machines running affect server performance
--- 	description = "",
--- 	privs = {
--- 		interact = true
--- 	},
--- 	func = function(name, param)
--- 		local privs = minetest.get_player_privs(name);
--- 		if not privs.privs then return end
--- 		local player = minetest.get_player_by_name(name);
--- 		if basic_machines.clockgen == 0 then basic_machines.clockgen = 1 else basic_machines.clockgen = 0 end
--- 		minetest.chat_send_player(name, "#clockgen set to " .. basic_machines.clockgen);
--- 	end
--- })
+minetest.register_chatcommand("clockgen", { -- test: toggle machine running with clockgens, useful for debugging
+-- i.e. seeing how machines running affect server performance
+	description = "",
+	privs = {
+		interact = true
+	},
+	func = function(name, param)
+		local privs = minetest.get_player_privs(name);
+		if not privs.privs then return end
+		local player = minetest.get_player_by_name(name);
+		if basic_machines.clockgen == 0 then basic_machines.clockgen = 1 else basic_machines.clockgen = 0 end
+		minetest.chat_send_player(name, "#clockgen set to " .. basic_machines.clockgen);
+	end
+})
 
 
 -- CLOCK GENERATOR : periodically activates machine on top of it
 minetest.register_abm({
 	nodenames = {"basic_machines:clockgen"},
-	neighbors = {""},
+	neighbors = {},
 	interval = machines_timer,
 	chance = 1,
 
@@ -2138,15 +1537,28 @@ minetest.register_node("basic_machines:clockgen", {
 	description = "Clock generator - use sparingly, continually activates top block",
 	tiles = {"basic_machine_clock_generator.png"},
 	groups = {cracky=3, mesecon_effector_on = 1},
-	sounds = default.node_sound_metal_defaults(),
+	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
-		local meta =  minetest.get_meta(pos);
-		local owner = placer:get_player_name() or "";
-		local privs = minetest.get_player_privs(owner);
-		if privs.machines then meta:set_int("machines",1) end
 
-		meta:set_string("owner",owner);
-		meta:set_string("infotext","clock generator (owned by " .. owner .. "): place machine to be activated on top of generator");
+
+		local name = placer:get_player_name()
+		local pinv = placer:get_inventory()
+		local match = minetest.find_node_near(pos, machines_clockradius, {"basic_machines:clockgen"})
+		      if match and not(minetest.check_player_privs(name, {server=true})) then
+
+			    local distance = math.floor(vector.distance(pos, match))
+			    minetest.chat_send_player(name,core.colorize('#FF0000',"##### Clockgens disturb each other. Place next one at least "..machines_clockradius.." nodes away #####"))
+			    minetest.set_node(pos,{name="air"})
+			    minetest.spawn_item(pos, "basic_machines:clockgen 1")
+		      else
+			    local meta =  minetest.get_meta(pos);
+			    local owner = placer:get_player_name() or "";
+			    local privs = minetest.get_player_privs(owner);
+			    if privs.machines then meta:set_int("machines",1) end
+
+			    meta:set_string("owner",owner);
+			    meta:set_string("infotext","clock generator (owned by " .. owner .. "): place machine to be activated on top of generator");
+		      end
 	end
 })
 
@@ -2174,9 +1586,6 @@ local get_distributor_form = function(pos,player)
 	local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
 	local form  =
 	"size[7,"..(0.75+(n)*0.75).."]" ..  -- width, height
-	default.gui_bg..
-	default.gui_bg_img..
-	default.gui_slots..
 	"label[0,-0.25;" .. minetest.colorize("lawngreen","target: x y z, MODE -2=only OFF, -1=NOT input/0/1=input, 2 = only ON") .. "]";
 	for i =1,n do
 		form = form.."field[0.25,"..(0.5+(i-1)*0.75)..";1,1;x"..i..";;"..p[i].x.."] field[1.25,"..(0.5+(i-1)*0.75)..";1,1;y"..i..";;"..p[i].y.."] field[2.25,"..(0.5+(i-1)*0.75)..";1,1;z"..i..";;"..p[i].z.."] field [ 3.25,"..(0.5+(i-1)*0.75)..";1,1;active"..i..";;" .. active[i] .. "]"
@@ -2186,6 +1595,7 @@ local get_distributor_form = function(pos,player)
 	form=form.."button_exit[4.25,"..(0.25+(n)*0.75)..";1,1;ADD;ADD]".."button_exit[3.,"..(0.25+(n)*0.75)..";1,1;OK;OK]".."field[0.25,"..(0.5+(n)*0.75)..";1,1;delay;delay;"..delay .. "]";
 	form = form.."button[6.25,"..(0.25+(n)*0.75)..";1,1;help;help]";
 	return form
+
 end
 
 
@@ -2195,7 +1605,7 @@ minetest.register_node("basic_machines:distributor", {
 	groups = {cracky=3, mesecon_effector_on = 1},
 	sounds = default.node_sound_wood_defaults(),
 	after_place_node = function(pos, placer)
-		local meta = minetest.env:get_meta(pos)
+		local meta = minetest.get_meta(pos)
 		meta:set_string("infotext", "Distributor. Right click/punch to set it up.")
 		meta:set_string("owner", placer:get_player_name()); meta:set_int("public",0);
 		for i=1,10 do
@@ -2356,7 +1766,6 @@ minetest.register_node("basic_machines:light_off", {
 	description = "Light off",
 	tiles = {"light_off.png"},
 	groups = {cracky=3, mesecon_effector_on = 1},
-	sounds = default.node_sound_glass_defaults(),
 	mesecons = {effector = {
 		action_on = function (pos, node,ttl)
 			minetest.swap_node(pos,{name = "basic_machines:light_on"});
@@ -2384,41 +1793,26 @@ minetest.register_node("basic_machines:light_on", {
 	description = "Light on",
 	tiles = {"light.png"},
 	groups = {cracky=3, mesecon_effector_on = 1},
-	sounds = default.node_sound_glass_defaults(),
-	paramtype = "light",
 	light_source = LIGHT_MAX,
 	after_place_node = function(pos, placer)
 		local meta = minetest.get_meta(pos);
 		local list_name = "nodemeta:"..pos.x..','..pos.y..','..pos.z
 		local deactivate = meta:get_int("deactivate");
-		local form  = "size[2,2]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			"field[0.25,0.5;2,1;deactivate;deactivate after ;"..deactivate.."]".."button_exit[0.,1;1,1;OK;OK]";
+		local form  = "size[2,2] field[0.25,0.5;2,1;deactivate;deactivate after ;"..deactivate.."]".."button_exit[0.,1;1,1;OK;OK]";
 		meta:set_string("formspec", form);
 	end,
 	on_receive_fields = function(pos, formname, fields, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return
-		end
-
+        if minetest.is_protected(pos, player:get_player_name()) then return end
 		if fields.deactivate then
 			local meta = minetest.get_meta(pos);
-			local deactivate = basic_machines.tonumber(fields.deactivate) or 0;
+			local deactivate = tonumber(fields.deactivate) or 0;
 			if deactivate <0 or deactivate > 600 then deactivate = 0 end
 			meta:set_int("deactivate",deactivate);
-			local form  = "size[2,2]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			"field[0.25,0.5;2,1;deactivate;deactivate after ;"..deactivate.."]".."button_exit[0.,1;1,1;OK;OK]";
+			local form  = "size[2,2] field[0.25,0.5;2,1;deactivate;deactivate after ;"..deactivate.."]".."button_exit[0.,1;1,1;OK;OK]";
 			meta:set_string("formspec", form);
 		end
 
-		end,
+    end,
 
 	mesecons = {effector = {
 		action_off = function (pos, node,ttl)
@@ -2426,7 +1820,7 @@ minetest.register_node("basic_machines:light_on", {
 		end,
 		action_on = function (pos, node,ttl)
 			local meta = minetest.get_meta(pos);
-			local count = basic_machines.tonumber(meta:get_string("infotext")) or 0;
+			local count = tonumber(meta:get_string("infotext")) or 0;
 			meta:set_string("infotext",count+1); -- increase activate count
 		end
 				}
@@ -2476,8 +1870,7 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
 		end
 	end
 
-	-- mover code, not first punch
-	if punchset[name].node == "basic_machines:mover" then
+	 if punchset[name].node == "basic_machines:mover" then -- mover code, not first punch
 
 		if minetest.is_protected(pos,name) then
 			minetest.chat_send_player(name, "MOVER: Punched position is protected. aborting.")
@@ -2485,14 +1878,8 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
 			punchset[name].state = 0; return
 		end
 
-		local meta = minetest.get_meta(punchset[name].pos)
-
-		if not meta then
-			return
-		end
-
-		local range = meta:get_float("upgrade") or 1
-		range = range * max_range
+		local meta = minetest.get_meta(punchset[name].pos);	if not meta then return end;
+		local range = meta:get_float("upgrade") or 1; range = range*max_range;
 
 		if punchset[name].state == 1 then
 			local privs = minetest.get_player_privs(puncher:get_player_name());
@@ -2529,57 +1916,39 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
 
 			punchset[name].pos11 = {x=pos.x,y=pos.y,z=pos.z};punchset[name].state = 3;
 			machines.pos11[name] = {x=pos.x,y=pos.y,z=pos.z};
-			-- mark pos11
-			machines.mark_pos11(name)
+			machines.mark_pos11(name) -- mark pos11
 			minetest.chat_send_player(name, "MOVER: Source2 position for mover set. Punch again to set target position.")
 			return
 		end
 
 		if punchset[name].state == 3 then
-			if punchset[name].node ~= "basic_machines:mover" then
-				punchset[name].state = 0
-				return
-			end
-
+			if punchset[name].node~="basic_machines:mover" then punchset[name].state = 0 return end
 			local privs = minetest.get_player_privs(puncher:get_player_name());
-			local elevator_mode = false
-			local meta = minetest.get_meta(punchset[name].pos)
-			meta:set_int("elevator", 0)
+			local elevator_mode = false;
+			if	(punchset[name].pos.x == pos.x and punchset[name].pos.z == pos.z) or
+				(punchset[name].pos.x == pos.x and punchset[name].pos.y == pos.y) or
+				(punchset[name].pos.y == pos.y and punchset[name].pos.z == pos.z) then -- check if elevator mode
+				local ecost = math.abs(punchset[name].pos.y-pos.y) + math.abs(punchset[name].pos.x-pos.x) + math.abs(punchset[name].pos.z-pos.z)
+				if ecost>3 then -- trying to make elevator?
 
-			-- check if elevator mode
-			if punchset[name].pos.x == pos.x and
-				 punchset[name].pos.z == pos.z then
-				-- trying to make elevator?
-				if math.abs(punchset[name].pos.y - pos.y) > 3 then
-					local meta = minetest.get_meta(punchset[name].pos)
-
-					-- only if object mode
-					if meta:get_string("mode") == "object" then
-						-- count number of diamond blocks to determine if elevator can be set up with this height distance
-						local inv = meta:get_inventory()
-						local upgrade = 0
-
+					local meta = minetest.get_meta(punchset[name].pos);
+					if meta:get_string("mode")=="object" then -- only if object mode
+						--count number of diamond blocks to determine if elevator can be set up with this height distance
+						local inv = meta:get_inventory();
+						local upgrade = 0;
 						if inv:get_stack("upgrade", 1):get_name() == "default:diamondblock" then
-
-							local inv_stack = inv:get_stack("upgrade", 1)
-							upgrade = inv_stack:get_count()
-
-							if upgrade > 10 then
-								upgrade = 10
-							end
+							upgrade = (inv:get_stack("upgrade", 1):get_count()) or 0;
 						end
 
-						local requirement = math.floor(math.abs(punchset[name].pos.y - pos.y) / 100) + 1
-
-						if upgrade < requirement then
-							minetest.chat_send_player(name, "MOVER: Error while trying to make elevator. Need at least "..requirement .. " diamond block(s) in upgrade (1 for every 100 height). ")
-							punchset[name].state = 0
-							return
+						local requirement = math.floor(ecost/100)+1;
+						if upgrade<requirement then
+							minetest.chat_send_player(name, "MOVER: Error while trying to make elevator. Need at least "..requirement .. " diamond block(s) in upgrade (1 for every 100 distance). ");
+							punchset[name].state = 0; return
 						else
-							elevator_mode = true
-							meta:set_int("upgrade", upgrade + 1)
-							meta:set_int("elevator", 1)
-							minetest.chat_send_player(name, "MOVER: elevator setup completed, upgrade level " .. upgrade)
+							elevator_mode=true;
+							meta:set_int("upgrade",upgrade+1);
+							meta:set_int("elevator",1);
+							minetest.chat_send_player(name, "MOVER: elevator setup completed, upgrade level " .. upgrade);
 							meta:set_string("infotext", "ELEVATOR, activate to use.")
 						end
 
@@ -2589,62 +1958,40 @@ minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing)
 
 			end
 
-			if not privs.privs and
-				 not elevator_mode and
-				 (math.abs(punchset[name].pos.x - pos.x) > range or math.abs(punchset[name].pos.y - pos.y) > range or math.abs(punchset[name].pos.z - pos.z) > range) then
+			if not privs.privs and not elevator_mode and (math.abs(punchset[name].pos.x - pos.x)>range or math.abs(punchset[name].pos.y - pos.y)>range or math.abs(punchset[name].pos.z - pos.z)>range) then
 				minetest.chat_send_player(name, "MOVER: Punch closer to mover. aborting.")
-				punchset[name].state = 0
-				return
+				punchset[name].state = 0; return
 			end
 
-			punchset[name].pos2 = {x = pos.x, y = pos.y, z = pos.z}
-			punchset[name].state = 0
-			-- mark pos2
-			machines.pos2[name] = punchset[name].pos2
-			machines.mark_pos2(name)
+			punchset[name].pos2 = {x=pos.x,y=pos.y,z=pos.z}; punchset[name].state = 0;
+			machines.pos2[name] = punchset[name].pos2;machines.mark_pos2(name) -- mark pos2
 
 			minetest.chat_send_player(name, "MOVER: End position for mover set.")
 
-			local x0 = punchset[name].pos1.x-punchset[name].pos.x
-			local y0 = punchset[name].pos1.y-punchset[name].pos.y
-			local z0 = punchset[name].pos1.z-punchset[name].pos.z
-			local meta = minetest.get_meta(punchset[name].pos)
+			local x0 = punchset[name].pos1.x-punchset[name].pos.x;
+			local y0 = punchset[name].pos1.y-punchset[name].pos.y;
+			local z0 = punchset[name].pos1.z-punchset[name].pos.z;
+			local meta = minetest.get_meta(punchset[name].pos);
 
-			local x1 = punchset[name].pos11.x-punchset[name].pos.x
-			local y1 = punchset[name].pos11.y-punchset[name].pos.y
-			local z1 = punchset[name].pos11.z-punchset[name].pos.z
 
-			local x2 = punchset[name].pos2.x-punchset[name].pos.x
-			local y2 = punchset[name].pos2.y-punchset[name].pos.y
-			local z2 = punchset[name].pos2.z-punchset[name].pos.z
+			local x1 = punchset[name].pos11.x-punchset[name].pos.x;
+			local y1 = punchset[name].pos11.y-punchset[name].pos.y;
+			local z1 = punchset[name].pos11.z-punchset[name].pos.z;
 
-			-- this ensures that x0 <= x1
-			if x0 > x1 then
-				x0, x1 = x1, x0
-			end
 
-			if y0 > y1 then
-				y0, y1 = y1, y0
-			end
+			local x2 = punchset[name].pos2.x-punchset[name].pos.x;
+			local y2 = punchset[name].pos2.y-punchset[name].pos.y;
+			local z2 = punchset[name].pos2.z-punchset[name].pos.z;
 
-			if z0 > z1 then
-				z0, z1 = z1, z0
-			end
+			if x0>x1 then x0,x1 = x1,x0 end -- this ensures that x0<=x1
+			if y0>y1 then y0,y1 = y1,y0 end
+			if z0>z1 then z0,z1 = z1,z0 end
 
-			meta:set_int("x1", x1)
-			meta:set_int("y1", y1)
-			meta:set_int("z1", z1)
+			meta:set_int("x1",x1);meta:set_int("y1",y1);meta:set_int("z1",z1);
+			meta:set_int("x0",x0);meta:set_int("y0",y0);meta:set_int("z0",z0);
+			meta:set_int("x2",x2);meta:set_int("y2",y2);meta:set_int("z2",z2);
 
-			meta:set_int("x0", x0)
-			meta:set_int("y0", y0)
-			meta:set_int("z0", z0)
-
-			meta:set_int("x2", x2)
-			meta:set_int("y2", y2)
-			meta:set_int("z2", z2)
-
-			meta:set_int("pc", 0)
-			meta:set_int("dim", (x1 - x0 + 1) * (y1 - y0 + 1) * (z1 - z0 + 1))
+			meta:set_int("pc",0); meta:set_int("dim",(x1-x0+1)*(y1-y0+1)*(z1-z0+1))
 			return
 		end
 	end
@@ -2818,51 +2165,36 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			"\n\n FUEL CONSUMPTION depends on blocks to be moved and distance. For example, stone or tree is harder to move than dirt, harvesting wheat is very cheap and and moving lava is very hard."..
 			"\n\n UPGRADE mover by moving mese blocks in upgrade inventory. Each mese block increases mover range by 10, fuel consumption is divided by (number of mese blocks)+1 in upgrade. Max 10 blocks are used for upgrade. Dont forget to click OK to refresh after upgrade. "..
 			"\n\n Activate mover by keypad/detector signal or mese signal (if mesecons mod) .";
-			local form = "size [6,7]"..
-			default.gui_bg..
-			default.gui_bg_img..
-			default.gui_slots..
-			"textarea[0,0;6.5,8.5;help;MOVER HELP;".. text.."]"
+			local form = "size [6,7] textarea[0,0;6.5,8.5;help;MOVER HELP;".. text.."]"
 			minetest.show_formspec(name, "basic_machines:help_mover", form)
 			return
 		end
 
 		if fields.tabs then
-			meta:set_int("seltab", basic_machines.tonumber(fields.tabs) or 1)
+			meta:set_int("seltab", tonumber(fields.tabs) or 1)
 			local form = get_mover_form(pos,player)
 			minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
 			return
 		end
 
-		if fields.OK == "OK" then --yyy
+		if fields.OK == "OK" then
 
 			local seltab = meta:get_int("seltab");
 
 			if seltab == 2 then -- POSITIONS
+
 				-- positions
-				local x0, y0, z0, x1, y1, z1, x2, y2, z2
-				x0 = basic_machines.tonumber(fields.x0) or 0
-				y0 = basic_machines.tonumber(fields.y0) or -1
-				z0 = basic_machines.tonumber(fields.z0) or 0
-				x1 = basic_machines.tonumber(fields.x1) or 0
-				y1 = basic_machines.tonumber(fields.y1) or -1
-				z1 = basic_machines.tonumber(fields.z1) or 0
-				x2 = basic_machines.tonumber(fields.x2) or 0
-				y2 = basic_machines.tonumber(fields.y2) or 1
-				z2 = basic_machines.tonumber(fields.z2) or 0
+				local x0,y0,z0,x1,y1,z1,x2,y2,z2;
+				x0=tonumber(fields.x0) or 0;y0=tonumber(fields.y0) or -1;z0 = tonumber(fields.z0) or 0
+				x1=tonumber(fields.x1) or 0;y1=tonumber(fields.y1) or -1;z1 = tonumber(fields.z1) or 0
+				x2=tonumber(fields.x2) or 0;y2=tonumber(fields.y2) or 1;z2 = tonumber(fields.z2) or 0;
 
 				-- did the numbers change from last time?
-				if meta:get_int("x0") ~= x0 or meta:get_int("y0") ~= y0 or
-					 meta:get_int("z0") ~= z0 or
-					 meta:get_int("x1") ~= x1 or
-					 meta:get_int("y1") ~= y1 or
-					 meta:get_int("z1") ~= z1 or
-					 meta:get_int("x2") ~= x2 or
-					 meta:get_int("y2") ~= y2 or
-					 meta:get_int("z2") ~= z2 then
+				if meta:get_int("x0")~=x0 or meta:get_int("y0")~=y0 or meta:get_int("z0")~=z0 or
+					meta:get_int("x1")~=x1 or meta:get_int("y1")~=y1 or meta:get_int("z1")~=z1 or
+					meta:get_int("x2")~=x2 or meta:get_int("y2")~=y2 or meta:get_int("z2")~=z2 then
 					-- are new numbers inside bounds?
-					if not privs.privs and
-						 (math.abs(x1) > max_range or math.abs(y1) > max_range or math.abs(z1) > max_range or math.abs(x2) > max_range or math.abs(y2) > max_range or math.abs(z2) > max_range) then
+					if not privs.privs and (math.abs(x1)>max_range or math.abs(y1)>max_range or math.abs(z1)>max_range or math.abs(x2)>max_range or math.abs(y2)>max_range or math.abs(z2)>max_range) then
 						minetest.chat_send_player(name,"#mover: all coordinates must be between ".. -max_range .. " and " .. max_range .. ". For increased range set up positions by punching"); return
 					end
 				end
@@ -2906,27 +2238,28 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			else -- MODE 1
 
 				if fields.mode then
-					meta:set_string("mode",fields.mode);
+					local mode = fields.mode;
+					if meta:get_string("mode")~=mode then
+						-- input validation
+						if check_mover_filter(meta:get_string("mode"), fields.prefer or "", meta:get_int("reverse")) then
+							meta:set_string("mode",fields.mode);
+						else
+							minetest.chat_send_player(name,"MOVER: wrong filter - must be name of existing minetest block")
+						end
+					end
 				end
 
 
 				--filter
-				local prefer = fields.prefer or ""
-				local meta_prefer = meta:get_string("prefer")
-
-				if meta_prefer ~= prefer then
-					meta_prefer = prefer
+				local prefer = fields.prefer or "";
+				if meta:get_string("prefer")~=prefer then
+					prefer = check_abuse(prefer)
+					if check_mover_filter(meta:get_string("mode"), prefer, meta:get_int("reverse")) then
+						meta:set_string("prefer",prefer);
+                        else
+						minetest.chat_send_player(name,"MOVER: wrong filter - must be name of existing minetest block")
+					end
 				end
-
-				-- prevent item stacks with more than 'stack_max' items
-				local preferstack = ItemStack(meta_prefer)
-				if preferstack:get_count() > preferstack:get_stack_max() then
-					preferstack:set_count(preferstack:get_stack_max())
-				else
-					preferstack:set_count(preferstack:get_count())
-				end
-
-				meta:set_string("prefer", preferstack:to_string());
 
 				--notification
 				meta:set_string("infotext", "Mover block. Mode or filter changed.");
@@ -2945,6 +2278,11 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			end
 
 		elseif fields.mode then
+            if not check_mover_filter(fields.mode, meta:get_string("prefer"), meta:get_string("reverse")) then
+				minetest.chat_send_player(name,"MOVER: wrong filter - must be name of existing minetest block")
+				return -- input validation
+			end
+
 			meta:set_string("mode",fields.mode);
 			local form = get_mover_form(pos,player)
 			minetest.show_formspec(player:get_player_name(), "basic_machines:mover_"..minetest.pos_to_string(pos), form)
@@ -2987,19 +2325,15 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 				"\ntext replacement : Suppose keypad A is set with text \"@some @. text @!\" and there are blocks on top of keypad A with infotext '1' and '2'. Suppose we target B with A and activate A. Then text of keypad B will be set to \"some 1. text 2!\""..
 				"\nword extraction: Suppose similiar setup but now keypad A is set with text \"%1\". Then upon activation text of keypad B will be set to 1.st word of infotext";
 
-			local form = "size[6,7]"..
-				default.gui_bg..
-				default.gui_bg_img..
-				default.gui_slots..
-				"textarea[0,0;6.5,8.5;help;KEYPAD HELP;".. text.."]"
+			local form = "size [6,7] textarea[0,0;6.5,8.5;help;KEYPAD HELP;".. text.."]"
 			minetest.show_formspec(name, "basic_machines:help_keypad", form)
 			return
 		end
 
 		if fields.OK == "OK" then
 			local x0,y0,z0,pass,mode;
-			x0=basic_machines.tonumber(fields.x0) or 0;y0=basic_machines.tonumber(fields.y0) or 1;z0=basic_machines.tonumber(fields.z0) or 0
-			pass = fields.pass or ""; mode = fields.mode or 1;
+			x0=tonumber(fields.x0) or 0;y0=tonumber(fields.y0) or 1;z0=tonumber(fields.z0) or 0
+			pass = fields.pass or ""; mode = tonumber(fields.mode) or 1;
 
 			if minetest.is_protected({x=pos.x+x0,y=pos.y+y0,z=pos.z+z0},name) then
 				minetest.chat_send_player(name, "KEYPAD: position is protected. aborting.")
@@ -3023,7 +2357,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 				if string.find(fields.text, "!") then minetest.log("action", string.format("%s set up keypad for message display at %s", name, minetest.pos_to_string(pos))) end
 			end
 
-			meta:set_int("iter",math.min(basic_machines.tonumber(fields.iter) or 1,500));meta:set_int("mode",basic_machines.tonumber(mode) or 2);
+			meta:set_int("iter",math.min(tonumber(fields.iter) or 1,500));meta:set_int("mode",mode);
 			meta:set_string("infotext", "Punch keypad to use it.");
 			if pass~="" then
 				if fields.text~="@" then
@@ -3096,11 +2430,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			"If source position is chest it will look into it and check if there are items inside. If mode is inventory it will check for items in specified inventory of source node."..
 			"\n\nADVANCED: you can select second source and then select AND/OR from the right top dropdown list to do logical operations. You can also filter output signal:\n -2=only OFF,-1=NOT/0/1=normal,2=only ON, 3 only if changed"..
 			" 4 = if target keypad set its text to detected object name" ;
-			local form = "size[5.5,5.5]"..
-				default.gui_bg..
-				default.gui_bg_img..
-				default.gui_slots..
-				"textarea[0,0;6,7;help;DETECTOR HELP;".. text.."]"
+			local form = "size [5.5,5.5] textarea[0,0;6,7;help;DETECTOR HELP;".. text.."]"
 			minetest.show_formspec(name, "basic_machines:help_detector", form)
 		end
 
@@ -3108,11 +2438,11 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 
 
 			local x0,y0,z0,x1,y1,z1,x2,y2,z2,r,node,NOT;
-			x0=basic_machines.tonumber(fields.x0) or 0;y0=basic_machines.tonumber(fields.y0) or 0;z0=basic_machines.tonumber(fields.z0) or 0
-			x1=basic_machines.tonumber(fields.x1) or 0;y1=basic_machines.tonumber(fields.y1) or 0;z1=basic_machines.tonumber(fields.z1) or 0
-			x2=basic_machines.tonumber(fields.x2) or 0;y2=basic_machines.tonumber(fields.y2) or 0;z2=basic_machines.tonumber(fields.z2) or 0
-			r=basic_machines.tonumber(fields.r) or 1;
-			NOT = basic_machines.tonumber(fields.NOT)
+			x0=tonumber(fields.x0) or 0;y0=tonumber(fields.y0) or 0;z0=tonumber(fields.z0) or 0
+			x1=tonumber(fields.x1) or 0;y1=tonumber(fields.y1) or 0;z1=tonumber(fields.z1) or 0
+			x2=tonumber(fields.x2) or 0;y2=tonumber(fields.y2) or 0;z2=tonumber(fields.z2) or 0
+			r=tonumber(fields.r) or 1;
+			NOT = tonumber(fields.NOT) or 0;
 
 
 			if minetest.is_protected({x=pos.x+x0,y=pos.y+y0,z=pos.z+z0},name) then
@@ -3139,9 +2469,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			meta:set_int("x2",x2);meta:set_int("y2",y2);meta:set_int("z2",z2);
 
 			meta:set_int("r",math.min(r,10));
-			if NOT then
-				meta:set_int("NOT",NOT);
-			end
+			meta:set_int("NOT",NOT);
 			meta:set_string("node",fields.node or "");
 
 			local mode = fields.mode or "node";
@@ -3169,8 +2497,8 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			local posf = {}; local active = {};
 			local n = meta:get_int("n");
 			for i = 1,n do
-				posf[i]={x=basic_machines.tonumber(fields["x"..i]) or 0,y=basic_machines.tonumber(fields["y"..i]) or 0,z=basic_machines.tonumber(fields["z"..i]) or 0};
-				active[i]=basic_machines.tonumber(fields["active"..i]) or 0;
+				posf[i]={x=tonumber(fields["x"..i]) or 0,y=tonumber(fields["y"..i]) or 0,z=tonumber(fields["z"..i]) or 0};
+				active[i]=tonumber(fields["active"..i]) or 0;
 
 				if (not (privs.privs) and math.abs(posf[i].x)>max_range or math.abs(posf[i].y)>max_range or math.abs(posf[i].z)>max_range) then
 					minetest.chat_send_player(name,"#distributor: all coordinates must be between ".. -max_range .. " and " .. max_range);
@@ -3184,7 +2512,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 					meta:set_int("active"..i,active[i]);
 				end
 				if fields.delay then
-					meta:set_float("delay", basic_machines.tonumber(fields.delay) or 0);
+					meta:set_float("delay", tonumber(fields.delay) or 0);
 				end
 			end
 		end
@@ -3202,7 +2530,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 		for i = 1,n do if fields["SHOW"..i] then j = i end end
 		--show j-th point
 		if j>0 then
-			local posf={x=basic_machines.tonumber(fields["x"..j]) or 0,y=basic_machines.tonumber(fields["y"..j]) or 0,z=basic_machines.tonumber(fields["z"..j]) or 0};
+			local posf={x=tonumber(fields["x"..j]) or 0,y=tonumber(fields["y"..j]) or 0,z=tonumber(fields["z"..j]) or 0};
 			machines.pos1[player:get_player_name()] = {x=posf.x+pos.x,y=posf.y+pos.y,z=posf.z+pos.z};
 			machines.mark_pos1(player:get_player_name())
 			return;
@@ -3249,11 +2577,7 @@ minetest.register_on_player_receive_fields(function(player,formname,fields)
 			"delay option adds delay to activations, in seconds. With negative delay activation is randomized with probability -delay/1000.\n\n"..
 			"ADVANCED: you can use distributor as an event handler. First you must deactivate first target by putting 0 at\n"..
 			"last place in first line. Meanings of first 2 numbers are as follows: first number 0/1 controls if node/n".. "listens to failed interact attempts around it, second number -1/1 listens to chat and can mute it";
-			local form = "size[5.5,5.5]"..
-				default.gui_bg..
-				default.gui_bg_img..
-				default.gui_slots..
-				"textarea[0,0;6,7;help;DISTRIBUTOR HELP;".. text.."]"
+			local form = "size [5.5,5.5] textarea[0,0;6,7;help;DISTRIBUTOR HELP;".. text.."]"
 			minetest.show_formspec(name, "basic_machines:help_distributor", form)
 		end
 
@@ -3266,54 +2590,54 @@ end)
 
 -- CRAFTS --
 
-minetest.register_craft({
-	output = "basic_machines:keypad",
-	recipe = {
-		{"default:stick"},
-		{"default:wood"},
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:keypad",
+	-- recipe = {
+		-- {"default:stick"},
+		-- {"default:wood"},
+	-- }
+-- })
 
-minetest.register_craft({
-	output = "basic_machines:mover",
-	recipe = {
-		{"default:mese_crystal", "default:mese_crystal","default:mese_crystal"},
-		{"default:mese_crystal", "default:mese_crystal","default:mese_crystal"},
-		{"default:stone", "basic_machines:keypad", "default:stone"}
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:mover",
+	-- recipe = {
+		-- {"default:mese_crystal", "default:mese_crystal","default:mese_crystal"},
+		-- {"default:mese_crystal", "default:mese_crystal","default:mese_crystal"},
+		-- {"default:stone", "basic_machines:keypad", "default:stone"}
+	-- }
+-- })
 
-minetest.register_craft({
-	output = "basic_machines:detector",
-	recipe = {
-		{"default:mese_crystal", "default:mese_crystal"},
-		{"default:mese_crystal", "default:mese_crystal"},
-		{"basic_machines:keypad",""}
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:detector",
+	-- recipe = {
+		-- {"default:mese_crystal", "default:mese_crystal"},
+		-- {"default:mese_crystal", "default:mese_crystal"},
+		-- {"basic_machines:keypad",""}
+	-- }
+-- })
 
-minetest.register_craft({
-	output = "basic_machines:light_on",
-	recipe = {
-		{"default:torch", "default:torch"},
-		{"default:torch", "default:torch"}
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:light_on",
+	-- recipe = {
+		-- {"default:torch", "default:torch"},
+		-- {"default:torch", "default:torch"}
+	-- }
+-- })
 
 
-minetest.register_craft({
-	output = "basic_machines:distributor",
-	recipe = {
-		{"default:steel_ingot"},
-		{"default:mese_crystal"},
-		{"basic_machines:keypad"}
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:distributor",
+	-- recipe = {
+		-- {"default:steel_ingot"},
+		-- {"default:mese_crystal"},
+		-- {"basic_machines:keypad"}
+	-- }
+-- })
 
-minetest.register_craft({
-	output = "basic_machines:clockgen",
-	recipe = {
-		{"default:diamondblock"},
-		{"basic_machines:keypad"}
-	}
-})
+-- minetest.register_craft({
+	-- output = "basic_machines:clockgen",
+	-- recipe = {
+		-- {"default:diamondblock"},
+		-- {"basic_machines:keypad"}
+	-- }
+-- })

@@ -612,66 +612,74 @@ function default.register_ores()
 	-- Scatter ores
 
 	-- Coal
+
 	minetest.register_ore({
 		ore_type       = "scatter",
 		ore            = "default:stone_with_coal",
 		wherein        = "default:stone",
-		clust_scarcity = 20 * 20 * 20,
+		clust_scarcity = 8 * 8 * 8,
 		clust_num_ores = 9,
 		clust_size     = 3,
 		y_max          = 31000,
 		y_min          = 1025,
 	})
 
-
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_coal",
+		wherein        = "default:stone",
+		clust_scarcity = 8 * 8 * 8,
+		clust_num_ores = 8,
+		clust_size     = 3,
+		y_max          = 64,
+		y_min          = -127,
+	})
 
 	minetest.register_ore({
 		ore_type       = "scatter",
 		ore            = "default:stone_with_coal",
 		wherein        = "default:stone",
-		clust_scarcity = 1000 * 1000 * 1000,
-		clust_num_ores = 2000,
-		clust_size     = 100,
-		y_max          = 0,
+		clust_scarcity = 12 * 12 * 12,
+		clust_num_ores = 30,
+		clust_size     = 5,
+		y_max          = -128,
 		y_min          = -31000,
 	})
 
-	-- Iron
-
+	-- Tin
 
 	minetest.register_ore({
 		ore_type       = "scatter",
-		ore            = "default:stone_with_iron",
+		ore            = "default:stone_with_tin",
 		wherein        = "default:stone",
 		clust_scarcity = 10 * 10 * 10,
 		clust_num_ores = 5,
 		clust_size     = 3,
-		y_max          = 0,
-		y_min          = -31000,
+		y_max          = 31000,
+		y_min          = 1025,
 	})
 
 	minetest.register_ore({
 		ore_type       = "scatter",
-		ore            = "default:stone_with_iron",
+		ore            = "default:stone_with_tin",
 		wherein        = "default:stone",
-		clust_scarcity = 1000 * 1000 * 1000,
-		clust_num_ores = 200,
-		clust_size     = 30,
+		clust_scarcity = 13 * 13 * 13,
+		clust_num_ores = 4,
+		clust_size     = 3,
 		y_max          = -64,
-		y_min          = -31000,
-	})
-	
-	minetest.register_ore({
-		ore_type       = "scatter",
-		ore            = "default:stone_with_iron",
-		wherein        = "default:stone",
-		clust_scarcity = 2000 * 2000 * 2000,
-		clust_num_ores = 700,
-		clust_size     = 70,
-		y_max          = -3000,
-		y_min          = -31000,
+		y_min          = -127,
 	})
 
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_tin",
+		wherein        = "default:stone",
+		clust_scarcity = 10 * 10 * 10,
+		clust_num_ores = 5,
+		clust_size     = 3,
+		y_max          = -128,
+		y_min          = -31000,
+	})
 
 	-- Copper
 
@@ -680,71 +688,66 @@ function default.register_ores()
 		ore            = "default:stone_with_copper",
 		wherein        = "default:stone",
 		clust_scarcity = 9 * 9 * 9,
-		clust_num_ores = 2,
-		clust_size     = 3,
-		y_max          = 31000,
-		y_min          = 1025,
-	})
-
-
-	minetest.register_ore({
-		ore_type       = "scatter",
-		ore            = "default:stone_with_copper",
-		wherein        = "default:stone",
-		clust_scarcity = 500 * 500 * 1000,
-		clust_num_ores = 200,
-		clust_size     = 30,
-		y_max          = -64,
-		y_min          = -31000,
-
-	})
-		minetest.register_ore({
-		ore_type       = "scatter",
-		ore            = "default:stone_with_copper",
-		wherein        = "default:stone",
-		clust_scarcity = 500 * 500 * 1000,
-		clust_num_ores = 700,
-		clust_size     = 40,
-		y_max          = -2000,
-		y_min          = -31000,
-
-	})
-
-
-	-- Tin
-
-	minetest.register_ore({
-		ore_type       = "scatter",
-		ore            = "default:stone_with_tin",
-		wherein        = "default:stone",
-		clust_scarcity = 30 * 30 * 30,
 		clust_num_ores = 5,
 		clust_size     = 3,
 		y_max          = 31000,
 		y_min          = 1025,
 	})
 
-
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_copper",
+		wherein        = "default:stone",
+		clust_scarcity = 12 * 12 * 12,
+		clust_num_ores = 4,
+		clust_size     = 3,
+		y_max          = -64,
+		y_min          = -127,
+	})
 
 	minetest.register_ore({
 		ore_type       = "scatter",
-		ore            = "default:stone_with_tin",
+		ore            = "default:stone_with_copper",
 		wherein        = "default:stone",
-		clust_scarcity = 1000 * 1000 * 1000,
-		clust_num_ores = 300,
-		clust_size     = 20,
+		clust_scarcity = 9 * 9 * 9,
+		clust_num_ores = 5,
+		clust_size     = 3,
 		y_max          = -128,
 		y_min          = -31000,
 	})
-	
+
+	-- Iron
+
 	minetest.register_ore({
 		ore_type       = "scatter",
-		ore            = "default:stone_with_tin",
+		ore            = "default:stone_with_iron",
 		wherein        = "default:stone",
-		clust_scarcity = 2000 * 2000 * 1000,
-		clust_num_ores = 300,
-		clust_size     = 40,
-		y_max          = -2000,
+		clust_scarcity = 9 * 9 * 9,
+		clust_num_ores = 12,
+		clust_size     = 3,
+		y_max          = 31000,
+		y_min          = 1025,
+	})
+
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_iron",
+		wherein        = "default:stone",
+		clust_scarcity = 7 * 7 * 7,
+		clust_num_ores = 5,
+		clust_size     = 3,
+		y_max          = -128,
+		y_min          = -255,
+	})
+
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_iron",
+		wherein        = "default:stone",
+		clust_scarcity = 12 * 12 * 12,
+		clust_num_ores = 29,
+		clust_size     = 5,
+		y_max          = -256,
 		y_min          = -31000,
 	})
 
@@ -754,9 +757,9 @@ function default.register_ores()
 		ore_type       = "scatter",
 		ore            = "default:stone_with_gold",
 		wherein        = "default:stone",
-		clust_scarcity = 1200 * 1200 * 1200,
-		clust_num_ores = 300,
-		clust_size     = 12,
+		clust_scarcity = 13 * 13 * 13,
+		clust_num_ores = 5,
+		clust_size     = 3,
 		y_max          = 31000,
 		y_min          = 1025,
 	})
@@ -765,38 +768,36 @@ function default.register_ores()
 		ore_type       = "scatter",
 		ore            = "default:stone_with_gold",
 		wherein        = "default:stone",
-		clust_scarcity = 25 * 25 * 25,
+		clust_scarcity = 15 * 15 * 15,
 		clust_num_ores = 3,
 		clust_size     = 2,
-		y_max          = -64,
-		y_min          = -255,
+		y_max          = -256,
+		y_min          = -511,
 	})
 
 	minetest.register_ore({
 		ore_type       = "scatter",
 		ore            = "default:stone_with_gold",
 		wherein        = "default:stone",
-		clust_scarcity = 30 * 30 * 30,
+		clust_scarcity = 13 * 13 * 13,
 		clust_num_ores = 5,
 		clust_size     = 3,
-		y_max          = -756,
-		y_min          = -31000,
-	})
-	
-	minetest.register_ore({
-		ore_type       = "scatter",
-		ore            = "default:stone_with_gold",
-		wherein        = "default:stone",
-		clust_scarcity = 3000 * 3000 * 3000,
-		clust_num_ores = 700,
-		clust_size     = 15,
-		y_max          = -7000,
+		y_max          = -512,
 		y_min          = -31000,
 	})
 
 	-- Mese crystal
 
-
+	minetest.register_ore({
+		ore_type       = "scatter",
+		ore            = "default:stone_with_mese",
+		wherein        = "default:stone",
+		clust_scarcity = 14 * 14 * 14,
+		clust_num_ores = 5,
+		clust_size     = 3,
+		y_max          = 31000,
+		y_min          = 1025,
+	})
 
 	minetest.register_ore({
 		ore_type       = "scatter",
@@ -813,9 +814,9 @@ function default.register_ores()
 		ore_type       = "scatter",
 		ore            = "default:stone_with_mese",
 		wherein        = "default:stone",
-		clust_scarcity = 100 * 100 * 100,
-		clust_num_ores = 300,
-		clust_size     = 10,
+		clust_scarcity = 14 * 14 * 14,
+		clust_num_ores = 5,
+		clust_size     = 3,
 		y_max          = -1024,
 		y_min          = -31000,
 	})
@@ -883,13 +884,233 @@ function default.register_ores()
 		ore_type       = "scatter",
 		ore            = "default:mese",
 		wherein        = "default:stone",
-		clust_scarcity = 108 * 100 * 100,
-		clust_num_ores = 20,
-		clust_size     = 4,
+		clust_scarcity = 28 * 28 * 28,
+		clust_num_ores = 5,
+		clust_size     = 3,
 		y_max          = -4096,
 		y_min          = -31000,
 	})
+	
+	--veins
+	--------
+	--coal block veins from -500 to -1000
+		minetest.register_ore({
+		ore_type       = "vein",
+		ore            = "default:coalblock",
+		wherein        = "default:stone",
+		y_max          = -500,
+		y_min          = -1000,
+		noise_params = {
+			offset  = 53,
+			scale   = 3,
+			spread  = {x=200, y=200, z=200},
+			seed    = 5390,
+			octaves = 4,
+			persist = 0.5,
+			lacunarity = 2.0,
+			flags = "eased",
+		},
+		noise_threshold = 1.6
+		})
+	--copper veins from -64 to -31000
+			minetest.register_ore({
+		ore_type       = "vein",
+		ore            = "default:stone_with_copper",
+		wherein        = "default:stone",
+		y_max          = -64,
+		y_min          = -31000,
+		noise_params = {
+			offset  = 10,
+			scale   = 3,
+			spread  = {x=201, y=200, z=200},
+			seed    = 5390,
+			octaves = 4,
+			persist = 0.5,
+			lacunarity = 2.0,
+			flags = "eased",
+		},
+		noise_threshold = 1.6
+		})
+	--tin veins from -64 t0 -31000
+		minetest.register_ore({
+		ore_type       = "vein",
+		ore            = "default:stone_with_tin",
+		wherein        = "default:stone",
+		y_max          = -64,
+		y_min          = -31000,
+		noise_params = {
+			offset  = 0,
+			scale   = 3,
+			spread  = {x=200, y=202, z=200},
+			seed    = 5390,
+			octaves = 4,
+			persist = 0.5,
+			lacunarity = 2.0,
+			flags = "eased",
+		},
+		noise_threshold = 1.6
+		})
+	--coal veins from 64 to -31000
+			minetest.register_ore({
+		ore_type       = "vein",
+		ore            = "default:coalblock",
+		wherein        = "default:stone",
+		y_max          = 64,
+		y_min          = -31000,
+		noise_params = {
+			offset  = -26,
+			scale   = 3,
+			spread  = {x=200, y=200, z=205},
+			seed    = 5390,
+			octaves = 4,
+			persist = 0.5,
+			lacunarity = 2.0,
+			flags = "eased",
+		},
+		noise_threshold = 1.6
+		})
+	--iron veins from -200 to -31000
+			minetest.register_ore({
+		ore_type       = "vein",
+		ore            = "default:stone_with_iron",
+		wherein        = "default:stone",
+		y_max          = -200,
+		y_min          = -31000,
+		noise_params = {
+			offset  = 567,
+			scale   = 3,
+			spread  = {x=205, y=200, z=200},
+			seed    = 5390,
+			octaves = 4,
+			persist = 0.5,
+			lacunarity = 2.0,
+			flags = "eased",
+		},
+		noise_threshold = 1.6
+		})
+	--gold veins from -4000 to -31000
+		minetest.register_ore({
+			ore_type       = "vein",
+			ore            = "default:stone_with_gold",
+			wherein        = "default:stone",
+			y_max          = -4000,
+			y_min          = -31000,
+			noise_params = {
+				offset  = 246,
+				scale   = 3,
+				spread  = {x=200, y=202, z=201},
+				seed    = 5390,
+				octaves = 4,
+				persist = 0.5,
+				lacunarity = 2.0,
+				flags = "eased",
+			},
+			noise_threshold = 1.6
+		})
+	--mese veins from -8000 to -31000
+		minetest.register_ore({
+			ore_type       = "vein",
+			ore            = "default:stone_with_mese",
+			wherein        = "default:stone",
+			y_max          = -8000,
+			y_min          = -31000,
+			noise_params = {
+				offset  = -567,
+				scale   = 3,
+				spread  = {x=200, y=200, z=200},
+				seed    = 5390,
+				octaves = 4,
+				persist = 0.5,
+				lacunarity = 2.0,
+				flags = "eased",
+			},
+			noise_threshold = 1.6
+		})
+	--diamond veins from -11000 to -31000
+		minetest.register_ore({
+			ore_type       = "vein",
+			ore            = "default:stone_with_diamond",
+			wherein        = "default:stone",
+			y_max          = -11000,
+			y_min          = -31000,
+			noise_params = {
+				offset  = 45,
+				scale   = 3,
+				spread  = {x=200, y=200, z=200},
+				seed    = 5390,
+				octaves = 4,
+				persist = 0.5,
+				lacunarity = 2.0,
+				flags = "eased",
+			},
+			noise_threshold = 1.6
+		})
+	--mese block veins from -12000 to -31000
+		minetest.register_ore({
+			ore_type       = "vein",
+			ore            = "default:mese",
+			wherein        = "default:stone",
+			y_max          = -12000,
+			y_min          = -31000,
+			noise_params = {
+				offset  = -494,
+				scale   = 3,
+				spread  = {x=200, y=200, z=200},
+				seed    = 5390,
+				octaves = 4,
+				persist = 0.5,
+				lacunarity = 2.0,
+				flags = "eased",
+			},
+			noise_threshold = 1.6
+		})
+	--diamond block veins from -20000 to -31000
+			minetest.register_ore({
+			ore_type       = "vein",
+			ore            = "default:diamondblock",
+			wherein        = "default:stone",
+			y_max          = -20000,
+			y_min          = -31000,
+			noise_params = {
+				offset  = -56,
+				scale   = 3,
+				spread  = {x=200, y=200, z=200},
+				seed    = 5390,
+				octaves = 4,
+				persist = 0.5,
+				lacunarity = 2.0,
+				flags = "eased",
+			},
+			noise_threshold = 1.6
+		})
+	
+	
+	
+	
+	
 end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 --

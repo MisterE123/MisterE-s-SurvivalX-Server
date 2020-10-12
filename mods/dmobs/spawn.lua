@@ -10,19 +10,41 @@ if dmobs.regulars then
 	mobs:register_spawn("dmobs:gnorm", {"default:dirt_with_grass","default:wood"}, 20, 10, 32000, 2, 31000)
 	mobs:register_spawn("dmobs:tortoise", {"default:clay","default:sand"}, 20, 10, 15000, 2, 31000)
 	mobs:register_spawn("dmobs:elephant", {"default:dirt_with_dry_grass","default:desert_sand"}, 20, 10, 15000, 2, 31000)
-	mobs:register_spawn("dmobs:badger", {"default:dirt_with_grass","default:dirt"}, 20, 10, 15000, 2, 31000)
+	mobs:register_spawn("dmobs:badger", {"default:dirt_with_rainforest_litter","default:dirt","default:dirt_with_coniferous_litter"}, 20, 10, 15000, 2, 31000)
 	mobs:register_spawn("dmobs:pig", {"default:pine_needles","default:leaves", "nyanland:cloudstone"}, 20, 10, 32000, 2, 31000)
 	mobs:register_spawn("dmobs:panda", {"default:dirt_with_grass","ethereal:bamboo_dirt"}, 20, 10, 15000, 2, 31000)
 
 	-- baddies
 
-	mobs:register_spawn("dmobs:wasp", {"default:dirt_with_grass"}, 20, 10, 32000, 2, 31000)
+	--mobs:register_spawn("dmobs:wasp", {"default:dirt_with_grass"}, 20, 10, 32000, 2, 31000)
+	
+	mobs:spawn({
+		name = "dmobs:wasp",
+		nodes = {"default:leaves","default:dirt_with_grass"},
+		max_light = 20,
+		min_light = 10,
+		min_height = 1024,
+		max_height = 4096,
+		active_object_count = 2,
+    })
+	mobs:spawn({
+		name = "dmobs:wasp_leader",
+		nodes = {"default:leaves","default:dirt_with_grass"},
+		max_light = 20,
+		min_light = 10,
+		min_height = 1024,
+		max_height = 4096,
+		active_object_count = 2,
+    })
+	
+	
 	mobs:register_spawn("dmobs:wasp", {"dmobs:hive"}, 20, 10, 16000, 2, 31000)
-	mobs:register_spawn("dmobs:wasp_leader", {"default:dirt_with_grass","dmobs:hive"}, 20, 10, 64000, 2, 31000)
+	mobs:register_spawn("dmobs:wasp_leader", {"dmobs:hive"}, 20, 10, 64000, 2, 31000)
+	--mobs:register_spawn("dmobs:wasp_leader", {"default:dirt_with_grass"}, 20, 10, 256000, 2, 31000)
 
-	mobs:register_spawn("dmobs:golem", {"default:stone"}, 7, 0, 16000, 2, 31000)
+	mobs:register_spawn("dmobs:golem", {"default:stone"}, 7, 0, 16000, 2, -25)
 	mobs:register_spawn("dmobs:pig_evil", {"default:pine_needles","default:leaves"}, 20, 10, 32000, 2, 31000)
-	mobs:register_spawn("dmobs:fox", {"default:dirt_with_grass","default:dirt"}, 20, 10, 32000, 2, 31000)
+	mobs:register_spawn("dmobs:fox", {"default:dirt_with_grass","default:dirt"}, 20, 10, 64000, 2, 31000)
 
 	if not dmobs.dragons then
 		mobs:register_spawn("dmobs:orc", {"default:snow","default:snow_block", "default:desert_sand"}, 20, 10, 15000, 2, 31000)
@@ -33,14 +55,25 @@ if dmobs.regulars then
 	end
 
 
-	mobs:register_spawn("dmobs:rat", {"default:stone","default:sand"}, 20, 0, 32000, 2, 31000)
+	mobs:register_spawn("dmobs:rat", {"default:stone","default:sand"}, 20, 0, 32000, 2, -200)
 	mobs:register_spawn("dmobs:treeman", {"default:leaves", "default:pine_needles"}, 7, 0, 16000, 2, 31000)
-	mobs:register_spawn("dmobs:skeleton", {"default:stone"}, 7, 0, 16000, 2, 31000)
+	mobs:register_spawn("dmobs:skeleton", {"default:stone"}, 7, 0, 16000, 2, -1000)
 end
 
 -- dragons
 
-mobs:register_spawn("dmobs:dragon", {"default:leaves","default:dirt_with_grass"}, 20, 10, 64000, 2, 31000)
+--mobs:register_spawn("dmobs:dragon", {"default:leaves","default:dirt_with_grass"}, 20, 10, 64000, 2, 31000)
+
+
+mobs:spawn({
+	name = "dmobs:dragon",
+   	nodes = {"default:leaves","default:dirt_with_grass"},
+   	max_light = 20,
+   	min_light = 10,
+	min_height = 1024,
+	max_height = 4096,
+	active_object_count = 2,
+    })
 
 if dmobs.dragons then
 	mobs:register_spawn("dmobs:dragon2", {"default:pine_needles"}, 20, 10, 64000, 2, 31000)

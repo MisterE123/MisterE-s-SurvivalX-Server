@@ -2,7 +2,7 @@
 local space_low = 5000 
 local space_high = 5999
 local redsky_low = 6000
-local redsky_high = 6999
+local redsky_high = 30999
 
 
 local player_list = {} -- Holds name of skybox showing for each player

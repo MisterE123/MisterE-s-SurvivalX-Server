@@ -251,8 +251,7 @@ end
 minetest.register_node("basic_machines:autocrafter", {
 	description = "Autocrafter", 
 	drawtype = "normal", 
-	tiles = {"basic_machines_autocrafter.png"}, 
-	sounds = default.node_sound_stone_defaults(),
+	tiles = {"pipeworks_autocrafter.png"}, 
 	groups = {cracky=3, mesecon_effector_on = 1},
 	on_construct = function(pos)
 		local meta = minetest.get_meta(pos)
@@ -264,12 +263,6 @@ minetest.register_node("basic_machines:autocrafter", {
 		update_meta(meta, false)
 	end,
 	on_receive_fields = function(pos, formname, fields, sender)
-
-		if minetest.is_protected(pos, sender:get_player_name()) then
-			minetest.record_protection_violation(pos, sender:get_player_name())
-			return
-		end
-
 		--if not pipeworks.may_configure(pos, sender) then return end
 		local meta = minetest.get_meta(pos)
 		if fields.on then
@@ -299,12 +292,6 @@ minetest.register_node("basic_machines:autocrafter", {
 		autocrafterCache[minetest.hash_node_position(pos)] = nil
 	end,
 	allow_metadata_inventory_put = function(pos, listname, index, stack, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return 0
-		end
-
 		--if not pipeworks.may_configure(pos, player) then return 0 end
 		local meta = minetest.get_meta(pos);if meta:get_string("owner")~=player:get_player_name() then return 0 end -- rnd
 		
@@ -323,12 +310,6 @@ minetest.register_node("basic_machines:autocrafter", {
 		return stack:get_count()
 	end,
 	allow_metadata_inventory_take = function(pos, listname, index, stack, player)
-
-		if minetest.is_protected(pos, player:get_player_name()) then
-			minetest.record_protection_violation(pos, player:get_player_name())
-			return 0
-		end
-
 		--if not pipeworks.may_configure(pos, player) then
 			-- minetest.log("action", string.format("%s attempted to take from autocrafter at %s", player:get_player_name(), minetest.pos_to_string(pos)))
 			-- return 0
@@ -375,11 +356,11 @@ minetest.register_node("basic_machines:autocrafter", {
 	--on_timer = run_autocrafter -- rnd
 })
 
-minetest.register_craft( {
-	output = "basic_machines:autocrafter",
-	recipe = {
-			{ "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
-			{ "default:diamondblock", "default:steel_ingot", "default:diamondblock" },
-			{ "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
-	},
-})
+-- minetest.register_craft( {
+	-- output = "basic_machines:autocrafter",
+	-- recipe = {
+	        -- { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" },
+	        -- { "default:diamondblock", "default:steel_ingot", "default:diamondblock" },
+	        -- { "default:steel_ingot", "default:mese_crystal", "default:steel_ingot" }
+	-- },
+-- })

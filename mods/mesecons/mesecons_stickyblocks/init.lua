@@ -17,3 +17,12 @@ minetest.register_node("mesecons_stickyblocks:sticky_block_all", {
 	end,
 	sounds = default.node_sound_wood_defaults(),
 })
+
+minetest.register_craft({
+	output = "mesecons_stickyblocks:sticky_block_all",
+	recipe = {
+		{"mesecons_materials:glue", "mesecons_materials:glue", "mesecons_materials:glue"},
+		{"mesecons_materials:glue","default:wood", "mesecons_materials:glue"},
+		{"mesecons_materials:glue", "mesecons_materials:glue", "mesecons_materials:glue"}
+	}
+})

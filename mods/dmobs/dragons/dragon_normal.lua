@@ -15,8 +15,8 @@ mobs:register_mob("dmobs:dragon", {
 	dogshoot_count_max =5,
    arrow = "dmobs:fire",
    shoot_offset = 1,
-   hp_min = 70,
-   hp_max = 100,
+   hp_min = 700,
+   hp_max = 1000,
    armor = 100,
 	collisionbox = {-0.6, -1.2, -0.6, 0.6, 0.6, 0.6},
    visual = "mesh",
@@ -45,6 +45,16 @@ mobs:register_mob("dmobs:dragon", {
    fly = true,
    drops = {
 	  {name = "mobs:lava_orb", chance = 1, min = 1, max = 1},
+	  {name = "3d_armor:helmet_gold", chance = 10, min = 1, max = 1},
+	  {name = "3d_armor:chestplate_gold", chance = 10, min = 1, max = 1},
+	  {name = "3d_armor:boots_gold", chance = 10, min = 1, max = 1},
+	  {name = "3d_armor:leggings_gold", chance = 10, min = 1, max = 1},
+	  {name = "3d_armor:boots_gold", chance = 10, min = 1, max = 1},
+	  {name = "default:goldblock", chance = 10, min = 1, max = 10},
+	  {name = "asteroid:goldore", chance = 10, min = 1, max = 1},
+	  {name = "default:gold_lump", chance = 10, min = 1, max = 1},
+	  {name = "default:stone_with_gold", chance = 10, min = 1, max = 10},
+	  
    },
    fall_speed = 0,
    stepheight = 10,
@@ -71,6 +81,6 @@ mobs:register_mob("dmobs:dragon", {
 
 
 
-mobs:spawn_specific("dmobs:dragon", {"air"}, {"default:stone"}, 20, 10, 300, 15000, 2, -100, 11000)
+mobs:spawn_specific("dmobs:dragon", {"air"}, {"default:stone"}, 20, 10, 300, 15000, 2, 1024, 4096)
    
 mobs:register_egg("dmobs:dragon", "Dragon", "default_apple.png", 1)

@@ -1,14 +1,14 @@
 -- rnd: code borrowed from machines, mark.lua
 
 -- need for marking
-machines = {}
-machines.pos1 = {}
-machines.pos11 = {}
-machines.pos2 = {}
+machines = {}; 
+
+machines.pos1 = {};machines.pos11 = {}; machines.pos2 = {}; 
 machines.marker1 = {}
 machines.marker11 = {}
 machines.marker2 = {}
 machines.marker_region = {}
+
 
 --marks machines region position 1
 machines.mark_pos1 = function(name)
@@ -19,7 +19,7 @@ machines.mark_pos1 = function(name)
 		local manip = minetest.get_voxel_manip()
 		manip:read_from_map(pos1, pos1)
 	end
-
+	
 	if not machines[name] then machines[name]={} end
 	machines[name].timer = 10;
 	if machines.marker1[name] ~= nil then --marker already exists
@@ -44,7 +44,7 @@ machines.mark_pos11 = function(name)
 		local manip = minetest.get_voxel_manip()
 		manip:read_from_map(pos11, pos11)
 	end
-
+	
 	if not machines[name] then machines[name]={} end
 	machines[name].timer = 10;
 	if machines.marker11[name] ~= nil then --marker already exists
@@ -69,7 +69,7 @@ machines.mark_pos2 = function(name)
 		local manip = minetest.get_voxel_manip()
 		manip:read_from_map(pos2, pos2)
 	end
-
+	
 	if not machines[name] then machines[name]={} end
 	machines[name].timer = 10;
 	if machines.marker2[name] ~= nil then --marker already exists

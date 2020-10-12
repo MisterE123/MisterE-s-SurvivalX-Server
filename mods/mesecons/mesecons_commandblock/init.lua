@@ -3,7 +3,7 @@ minetest.register_chatcommand("say", {
 	description = "Say <text> as the server",
 	privs = {server=true},
 	func = function(name, param)
-		minetest.chat_send_all(name .. ": " .. param)
+		minetest.chat_send_all(minetest.colorize("#F00", param))
 	end
 })
 

@@ -62,7 +62,7 @@ function throwing_register_arrow_standard (kind, desc, eq, toughness, craft)
 
 				if obj:get_luaentity() ~= nil then
 					if obj:get_luaentity().name ~= "throwing:arrow_" .. kind .. "_entity" and obj:get_luaentity().name ~= "__builtin:item" then
-						local speed = vector.length(self.object:getvelocity())
+						local speed = vector.length(self.object:getvelocity()) or 0 --added "or 0" bc mod was erroring when speed of arrow was zero after hitting balrog
 						local damage = ((speed + eq)^1.2)/10
 						obj:punch(self.object, 1.0, {
 							full_punch_interval=1.0,

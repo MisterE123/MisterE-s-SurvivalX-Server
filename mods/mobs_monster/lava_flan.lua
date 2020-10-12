@@ -4,7 +4,7 @@ local S = mobs.intllib
 
 -- Lava Flan by Zeg9 (additional textures by JurajVajda)
 
-mobs:register_mob("mobs_monster:lava_flan", {
+--[[mobs:register_mob("mobs_monster:lava_flan", {
 	type = "monster",
 	passive = false,
 	attack_type = "dogfight",
@@ -93,7 +93,7 @@ mobs:spawn({
 mobs:register_egg("mobs_monster:lava_flan", S("Lava Flan"), "default_lava.png", 1)
 
 mobs:alias_mob("mobs:lava_flan", "mobs_monster:lava_flan") -- compatibility
-
+]]--
 
 -- lava orb
 minetest.register_craftitem(":mobs:lava_orb", {

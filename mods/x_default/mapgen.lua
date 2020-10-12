@@ -1,6 +1,6 @@
 -- Lapis
-
-minetest.register_ore({
+-- high ores
+--[[minetest.register_ore({
 	ore_type       = "scatter",
 	ore            = "x_default:stone_with_lapis",
 	wherein        = "default:stone",
@@ -9,7 +9,9 @@ minetest.register_ore({
 	clust_size     = 3,
 	y_max          = 31000,
 	y_min          = 1025,
-})
+})]]--
+
+
 
 minetest.register_ore({
 	ore_type       = "scatter",
@@ -18,8 +20,8 @@ minetest.register_ore({
 	clust_scarcity = 7 * 7 * 7,
 	clust_num_ores = 5,
 	clust_size     = 3,
-	y_max          = -950,
-	y_min          = -3000,
+	y_max          = -7000,
+	y_min          = -10000,
 })
 
 minetest.register_ore({
@@ -29,6 +31,6 @@ minetest.register_ore({
 	clust_scarcity = 12 * 12 * 12,
 	clust_num_ores = 29,
 	clust_size     = 5,
-	y_max          = -3000,
-	y_min          = -7000,
+	y_max          = -10000,
+	y_min          = -33000,
 })

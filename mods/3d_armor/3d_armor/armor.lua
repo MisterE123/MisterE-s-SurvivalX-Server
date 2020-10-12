@@ -50,6 +50,7 @@ minetest.register_alias("adminhelmet", "3d_armor:helmet_admin")
 minetest.register_alias("adminchestplate", "3d_armor:chestplate_admin")
 minetest.register_alias("adminleggings", "3d_armor:leggings_admin")
 
+
 if armor.materials.wood then
 	armor:register_armor("3d_armor:helmet_wood", {
 		description = S("Wood Helmet"),

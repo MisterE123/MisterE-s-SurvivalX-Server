@@ -7,7 +7,7 @@ otherworlds.settings.crafting = {
 
 -- space_asteroids
 otherworlds.settings.space_asteroids = {
-	enable = false, -- set to false to prevent space mapgen
+	enable = true, -- set to false to prevent space mapgen
 	YMIN = 5000, -- adjust to change minimum height of space layer
 	YMAX = 6000, -- adjust to change maximum height for space layer
 }
@@ -17,10 +17,10 @@ otherworlds.settings.space_asteroids = {
 otherworlds.settings.redsky_asteroids = {
 	enable = true, -- set to false to prevent redsky mapgen
 	YMIN = 6000, -- adjust to change minimum height of redsky layer
-	YMAX = 7000, -- adjust to change maximum height for redsky layer
+	YMAX = 31000, -- adjust to change maximum height for redsky layer
 }
 
 -- gravity
 otherworlds.settings.gravity = {
-	enable = false, -- set to true to enable gravity
+	enable = true, -- set to true to enable gravity
 }

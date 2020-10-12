@@ -15,42 +15,20 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 basic_machines = {};
 
-basic_machines.tonumber = function(number)
-	local nr = tonumber(number)
+-- define your maxstacksize here !
+basic_machines.maxstack = 1024
+basic_machines.activeblocks = minetest.settings:get("active_block_range") or 2
+basic_machines.activeblocks = math.floor((vector.distance({x=0,y=0,z=0}, {x=basic_machines.activeblocks,y=basic_machines.activeblocks,z=basic_machines.activeblocks})*16))
+basic_machines.maxgen = 4                              -- max number of allowed generators per active mapblocks
+basic_machines.maxclock = 2                              -- max number of allowed clockgens per active mapblocks
 
-	-- nil check
-	if not nr then
-		nr = 0
-	end
-
-	-- NaN check
-	if nr ~= nr then
-		nr = 0
-	end
-
-	-- infinite number check
-	if not (nr > -math.huge and nr < math.huge) then
-		nr = 0
-	end
-
-	-- prevent voxel manip crash for large numbers
-	if nr > 99 then
-		nr = 99
-	end
-
-	if nr < -99 then
-		nr = -99
-	end
-
-	return nr
-end
 
 dofile(minetest.get_modpath("basic_machines").."/mark.lua") -- used for markings, borrowed and adapted from worldedit mod
 dofile(minetest.get_modpath("basic_machines").."/mover.lua") -- mover, detector, keypad, distributor
 dofile(minetest.get_modpath("basic_machines").."/technic_power.lua") -- technic power for mover
-
 dofile(minetest.get_modpath("basic_machines").."/recycler.lua") -- recycle old used tools
 dofile(minetest.get_modpath("basic_machines").."/grinder.lua") -- grind materials into dusts
 dofile(minetest.get_modpath("basic_machines").."/autocrafter.lua") -- borrowed and adapted from pipeworks mod
@@ -61,12 +39,11 @@ dofile(minetest.get_modpath("basic_machines").."/protect.lua") -- enable interac
 -- OPTIONAL ADDITIONAL STUFF ( comment to disable )
 
 dofile(minetest.get_modpath("basic_machines").."/ball.lua") -- interactive flying ball, can activate blocks or be used as a weapon
--- dofile(minetest.get_modpath("basic_machines").."/enviro.lua") -- enviro blocks that can change surrounding enviroment physics, uncomment spawn/join code to change global physics, disabled by default
-
--- minetest.after(0, function()
-	-- dofile(minetest.get_modpath("basic_machines").."/mesecon_doors.lua") -- if you want open/close doors with signal, also steel doors are made impervious to dig through, removal by repeat punch
-	-- dofile(minetest.get_modpath("basic_machines").."/mesecon_lights.lua") -- adds ability for other light blocks to toggle light
--- end)
+dofile(minetest.get_modpath("basic_machines").."/enviro.lua") -- enviro blocks that can change surrounding enviroment physics, uncomment spawn/join code to change global physics, disabled by default
+minetest.after(0, function() 
+	dofile(minetest.get_modpath("basic_machines").."/mesecon_doors.lua") -- if you want open/close doors with signal, also steel doors are made impervious to dig through, removal by repeat punch
+	dofile(minetest.get_modpath("basic_machines").."/mesecon_lights.lua") -- adds ability for other light blocks to toggle light
+end)
 
 
 -- MACHINE PRIVILEGE
@@ -81,6 +58,7 @@ minetest.register_craftitem("basic_machines:charcoal", {
 	description = "Wood charcoal",
 	inventory_image = "charcoal.png",
 })
+
 
 minetest.register_craft({
 	type = 'cooking',
